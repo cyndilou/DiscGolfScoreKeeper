@@ -46,3 +46,83 @@ discGolfFactories.factory(
 
         return service;
     });
+
+discGolfFactories.factory(
+    'CourseFactory', 
+    function () {
+        var service = {};
+
+        service.getCourseList = function () {
+            if (service.list === undefined) {
+                loadList();
+            }
+
+            return service.list;
+        }
+
+        service.getCourse = function (courseId) {
+            if (service.cache === undefined) {
+                service.cache = {};
+            }
+
+            if (service.cache[courseId] === undefined) {
+                loadCourse(courseId);
+            }
+
+            return service.cache[courseId];
+        }
+
+        service.createCourse = function (name, holeCount) {
+            if (service.cache === undefined) {
+                service.cache = {};
+            }
+
+            var course = new Course(name, holeCount);
+
+            service.list[course.id] = course.toListItem();
+            service.cache[course.id] = course;
+
+            saveList();
+            saveCourse(course);
+
+            return course;
+        }
+
+        service.updateCourse = function (course) {
+            service.list[course.id] = course.toListItem();
+
+            saveList();
+            saveCourse(course);
+        }
+
+        service.deleteCourse = function (courseId) {
+            delete service.list[courseId];
+            delete service.cache[courseId];
+
+            deleteCourse(courseId);
+            saveList();
+        }
+
+        function loadList () {
+            service.list = {};
+            //service.list = JSON.parse(localStorage.getItem('discGolfCouseList')) || {};
+        }
+
+        function saveList () {
+            //localStorage.setItem('discGolfCouseList', JSON.stringify(service.list));
+        }
+
+        function loadCourse (courseId) {
+            //service.cache[courseId] = JSON.parse(localStorage.getItem(courseId));
+        }
+
+        function saveCourse (course) {
+            //localStorage.setItem(course.id, JSON.stringify(course));
+        }
+
+        function deleteCourse (courseId) {
+            //localStorage.removeItem(courseId);
+        }
+
+        return service;
+    });

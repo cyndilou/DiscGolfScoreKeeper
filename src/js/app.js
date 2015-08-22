@@ -94,10 +94,10 @@ discGolfApp.config(
          //                        when('/scorecard', {
          //                            templateUrl: 'partials/scorecard.html'
          //                        }).
-//         when('/new-game', {
-//             templateUrl: 'partials/newGame.html',
-//             controller: 'NewGameController'
-//         }).
+         when('/new-game', {
+             templateUrl: 'partials/newGame.html',
+             controller: 'NewGameController'
+         }).
          //                        when('/games', {
          //                            templateUrl: 'partials/gameHistory.html'//,
          //                            //controller: 'GameListController'

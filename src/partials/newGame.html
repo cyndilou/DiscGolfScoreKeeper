@@ -1,0 +1,69 @@
+<div>
+    <div class="page-header">
+        <h3>New Game</h3>
+    </div>
+    <div class="fixed-height">
+        <div class="panel panel-default">
+            <div class="panel-heading">Course</div>
+            <div class="panel-body">
+
+                <select class="form-control" 
+                        ng-model="selectedCourseId"
+                        ng-options="id as toOptionDisplay(course) for (id, course) in courseList">
+                    <option value="" disabled>-- select course --</option>
+                </select>
+
+                <div class="input-group topMargin">
+                    <input type="text" class="form-control" placeholder="New Course" ng-model="newCourseName">
+
+                    <div class="input-group-btn" data-toggle="buttons">
+                        <label class="btn btn-default active" ng-click="newCourseHoleCount = 9">
+                            <input type="radio" name="holeCount" value="9"> 9 Holes
+                        </label> 
+                        <label class="btn btn-default" ng-click="newCourseHoleCount = 18">
+                            <input type="radio" name="holeCount" value="18"> 18 Holes
+                        </label>
+                        <button class="btn btn-success" type="button" ng-click="addCourse()">
+                            <span class="fa fa-plus"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Players</div>
+            <div class="panel-body">
+                <div class="list-group">
+                    <div class="list-group-item checkbox" ng-repeat="player in playerList" ng-class="{'list-group-item-success' : selectedPlayers.indexOf(player.id) > -1}">
+                        <label style="width:100%">
+                            <input
+                                   type="checkbox"
+                                   name="selectedPlayers[]"
+                                   value="{{player.name}}"
+                                   ng-checked="selectedPlayers.indexOf(player.id) > -1"
+                                   ng-click="toggleSelection(player)"
+                                   > {{player.name}}
+                        </label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="newPlayerName" placeholder="New Player Name">
+                    <span class="input-group-btn">
+                        <button class="btn btn-success" type="button" ng-click="addNewPlayer()">
+                            <span class="fa fa-plus"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button class="btn btn-block btn-lg btn-success" ng-click="onStartGame()" ng-disabled="selectedCourseId === undefined || selectedPlayers.length == 0">
+            <span class="fa fa-play"></span>
+            Play
+        </button>
+    </div>
+</div>
+

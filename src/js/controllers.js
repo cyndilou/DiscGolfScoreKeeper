@@ -55,3 +55,53 @@ discGolfControllers.controller(
              PlayersFactory.deletePlayer(item.player);
          }
      }]);
+
+discGolfControllers.controller(
+    'NewGameController', 
+    ['$scope', '$http', '$location', 'PlayersFactory', 'CourseFactory',
+     function ($scope, $http, $location, PlayersFactory, CourseFactory) {
+
+         $scope.newPlayerName = '';
+         $scope.newCourseName = '';
+         $scope.newCourseHoleCount = 9;
+
+         $scope.courseList = CourseFactory.getCourseList();
+         $scope.selectedCourseId;
+
+         $scope.selectedPlayers = [];
+
+         $scope.playerList = PlayersFactory.getPlayers();
+
+         $scope.addNewPlayer = function () {
+             var player = PlayersFactory.createPlayer($scope.newPlayerName);
+
+             $scope.selectedPlayers.push(player.id);
+             $scope.newPlayerName = '';
+         };
+
+         $scope.addCourse = function () {
+             console.log($scope.test);
+
+             var course = CourseFactory.createCourse($scope.newCourseName, $scope.newCourseHoleCount);
+
+             $scope.selectedCourseId = course.id;
+             $scope.newCourseName = '';
+         }
+
+         $scope.toggleSelection = function toggleSelection(player) {
+             var idx = $scope.selectedPlayers.indexOf(player.id);
+             if (idx > -1) {
+                 $scope.selectedPlayers.splice(idx, 1);
+             } else {
+                 $scope.selectedPlayers.push(player.id);
+             }
+         };
+
+         $scope.toOptionDisplay = function (course) {
+             return course.name + ' (' + course.holeCount + ' holes)';
+         };
+
+         $scope.onStartGame = function () {
+             $location.path('games/id/1');
+         };
+     }]);
