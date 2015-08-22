@@ -1,0 +1,100 @@
+<div>
+    <div class="page-header">
+        <h3>Players</h3>
+    </div>
+    <div class="fixed-height">
+        <div class="list-group">
+            <div class="list-group-item" ng-repeat="item in editablePlayerList">
+                <div ng-hide="item.editMode">
+                    {{item.player.name}}
+                    <button class="transparentButton pull-right"
+                            ng-click="editPlayer(item)">
+                        <span class="fa fa-pencil"></span>
+                    </button>
+                </div>
+                <div ng-show="item.editMode">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Name" ng-model="item.temp.name" show-focus="item.editMode">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" ng-click="endEdit(item, false)">
+                                        <span class="fa fa-close"></span>
+                                    </button>
+                                    <button class="btn btn-success" type="submit" ng-click="endEdit(item, true)">
+                                        <span class="fa fa-check"></span>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                    <br>
+                    <button class="btn btn-danger btn-block"
+                            ng-click="deletePlayer(item)">
+                        <span class="fa fa-trash"></span>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <br>
+
+    <div class="footer">
+        <button class="btn btn-block btn-lg btn-success" ng-click="addPlayer()">Add Player</button>
+    </div>
+
+
+    <!--
+<div class="panel panel-success">
+<div class="panel-heading" >
+<div id="playerDisplay">
+<button class="transparentButton" type="button" data-toggle="collapse" data-target="#collapseTable" aria-expanded="false" aria-controls="collapseTable">
+Player 1
+</button>
+<button class="transparentButton pull-right">
+<span class="fa fa-pencil"></span>
+</button>
+</div>
+<div id="playerEdit" class="hidden">
+<div class="input-group">
+<input type="text" class="form-control" placeholder="Name"/>
+
+<span class="input-group-btn">
+<button class="btn btn-default">
+<span class="fa fa-close"> Cancel</span>
+</button>
+<button class="btn btn-success">
+<span class="fa fa-check"> OK</span>
+</button>
+</span>
+</div>
+<br>
+<button class="btn btn-success btn-block">
+<span class="fa fa-trash"> Delete Player</span>
+</button>
+</div>
+</div>
+<div id="collapseTable" class="collapse">
+<table class="table">
+<tr>
+<th colspan="2">Stats</th>
+</tr>
+<tr>
+<td>Stat 1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Stat 2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Stat 3</td>
+<td>1</td>
+</tr>
+</table>
+</div>
+</div>
+-->
+</div>
