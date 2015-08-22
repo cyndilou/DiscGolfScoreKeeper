@@ -1,0 +1,84 @@
+.buttonToggle {
+    display: none;
+}
+
+.buttonToggle:checked + label {
+    cursor: default;
+}
+
+.squareContainer {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+}
+.dummy {
+    padding-top: 75%; /* 4:3 aspect ratio */
+}
+.element {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+.verticalCenter {
+    width: 100%;
+    height: 50%;
+
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+}
+
+.transparentButton {
+    background-color: transparent;
+    border: none;
+}
+
+.hidden {
+    display: none;
+}
+
+.fixed-height {
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+.footer {
+    position:fixed;
+    left:0px;
+    bottom:0px;
+    width:100%;
+    padding: 10px;
+}
+
+.topMargin {
+    margin-top: 10px;
+}
+
+.pager-btn {
+    width: 40%;
+}
+
+.my-table {
+    display: table;
+    border-collapse: separate;
+}
+
+.my-row { display:table-row; }
+
+.my-cell {
+    display:table-cell;
+    padding:5px;
+    vertical-align: middle;
+}
+
+.noWrap {
+    overflow: auto;
+}

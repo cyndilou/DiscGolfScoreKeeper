@@ -1,0 +1,1 @@
+var discGolfFactories = angular.module('discGolfFactories', []);

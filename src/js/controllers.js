@@ -1,0 +1,1 @@
+var discGolfControllers = angular.module('discGolfControllers', []);
