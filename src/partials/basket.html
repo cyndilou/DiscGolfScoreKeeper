@@ -1,0 +1,63 @@
+<div>
+    <div class="page-header">
+        <h3>{{course.name}} <small>Hole {{holeNumber}}</small></h3>
+
+        <div class="my-table">
+            <div class="my-row">
+                <div class="my-cell">
+                    <label class="control-label" for="par">Par</label>
+                </div>
+                <div class="my-cell">
+                    <input type="text" class="form-control" id="par" style="width:50px" ng-model="course.holes[holeNumber].par">
+                </div>
+
+                <div class="my-cell">
+                    <label class="control-label" for="distance">Distance</label>
+                </div>
+                <div class="my-cell">
+                    <div class="input-group" style="width:100px">
+                        <input type="text" class="form-control" id="distance"  ng-model="course.holes[holeNumber].distance">
+                        <span class="input-group-addon">ft</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h4>Scores <small><a class="pull-right" href="#/games/{{game.id}}">Game Overview</a></small></h4>
+        <div class="list-group">
+            <div class="list-group-item" ng-repeat="player in gamePlayers">
+                <p>
+                    <strong>{{player.name}}</strong>
+                    <span class="badge pull-right">Total: {{getPlayerTotal(player.id)}}</span>
+                </p>
+                <div style="width: 100%;overflow: auto;">
+                    <div class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-default" 
+                               ng-class="{'btn-active btn-success active' : game.holeScores[holeNumber][player.id] == value}"
+                               ng-repeat="value in scoreOptions" 
+                               ng-click="setPlayerScore(player, value)" 
+                               resize-parent>
+                            <input type="radio" name="options" autocomplete="off">{{value}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button class="btn btn-success btn-lg pull-right pager-btn" ng-click="nextHole()" ng-hide="holeNumber == course.holeCount">
+            Next&nbsp;
+            <span class="fa fa-chevron-right"></span>
+        </button>
+        <button class="btn btn-success btn-lg pull-left pager-btn" ng-click="previousHole()" ng-disabled="holeNumber == 1">
+            <span class="fa fa-chevron-left"></span>
+            &nbsp;Previous
+        </button>
+        <button class="btn btn-success btn-lg pull-right pager-btn" ng-click="gameOver()" ng-show="holeNumber == course.holeCount">
+            Done!
+        </button>
+    </div>
+</div>

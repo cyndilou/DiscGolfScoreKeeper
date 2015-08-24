@@ -28,6 +28,11 @@ function Game (courseId, playerIds) {
     this.courseId = courseId;
     this.playerIds = playerIds;
     this.holeScores = {};
+    this.scores = {};
+    
+    this.toListItem = function () {
+        return { id: this.id, date: this.date, courseId: this.courseId };
+    }
 
     this.setPlayerScore = function (holeNumber, playerId, score) {
         if (this.holeScores[holeNumber] === undefined) {

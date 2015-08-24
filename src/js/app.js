@@ -106,10 +106,10 @@ discGolfApp.config(
          //                            templateUrl: 'partials/game.html'//,
          //                            //controller: 'GameController'
          //                        }).
-//         when('/games/:gameId/:basket', {
-//             templateUrl: 'partials/basket.html',
-//             controller: 'GameController'
-//         }).
+         when('/games/:gameId/:basket', {
+             templateUrl: 'partials/basket.html',
+             controller: 'GameController'
+         }).
          when('/players', {
              templateUrl: 'partials/players.html',
              controller: 'PlayerController'
