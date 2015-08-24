@@ -8,7 +8,9 @@
                     <label class="control-label" for="par">Par</label>
                 </div>
                 <div class="my-cell">
-                    <input type="text" class="form-control" id="par" style="width:50px" ng-model="course.holes[holeNumber].par">
+                    <input type="text" class="form-control" id="par" style="width:50px" 
+                           ng-model="course.holes[holeNumber].par"
+                           ng-change="updateCourse()">
                 </div>
 
                 <div class="my-cell">
@@ -16,7 +18,9 @@
                 </div>
                 <div class="my-cell">
                     <div class="input-group" style="width:100px">
-                        <input type="text" class="form-control" id="distance"  ng-model="course.holes[holeNumber].distance">
+                        <input type="text" class="form-control" id="distance"  
+                               ng-model="course.holes[holeNumber].distance"
+                               ng-change="updateCourse()">
                         <span class="input-group-addon">ft</span>
                     </div>
                 </div>

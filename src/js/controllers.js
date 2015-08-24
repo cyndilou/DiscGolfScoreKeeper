@@ -2,15 +2,15 @@ var discGolfControllers = angular.module('discGolfControllers', []);
 
 discGolfControllers.controller(
     'PlayerController', 
-    ['$scope', '$http', 'PlayersFactory',
-     function ($scope, $http, PlayersFactory) {
+    ['$scope', '$http', 'PlayerFactory',
+     function ($scope, $http, PlayerFactory) {
 
-         var playerList = PlayersFactory.getPlayers();
+         var playerList = PlayerFactory.getList();
 
          $scope.editablePlayerList = [];
          angular.forEach(playerList, function (value, index) {
              this.push({
-                 player: value,
+                 player: PlayerFactory.get(value.id),
                  editMode: false
              });
          }, $scope.editablePlayerList);
@@ -25,7 +25,7 @@ discGolfControllers.controller(
          $scope.endEdit = function (item, saveChanges) {
              if (saveChanges == true) {
                  item.player.name = item.temp.name;
-                 PlayersFactory.modifyPlayer(item.player);
+                 PlayerFactory.update(item.player);
              }
 
              item.temp = null;
@@ -33,7 +33,7 @@ discGolfControllers.controller(
          };
 
          $scope.addPlayer = function () {
-             var player = PlayersFactory.createPlayer("New Player");
+             var player = PlayerFactory.createPlayer("New Player");
 
              var newItem = {
                  player: player,
@@ -52,28 +52,28 @@ discGolfControllers.controller(
                  }
              }
 
-             PlayersFactory.deletePlayer(item.player);
+             PlayerFactory.delete(item.player.id);
          }
      }]);
 
 discGolfControllers.controller(
     'NewGameController', 
-    ['$scope', '$http', '$location', 'PlayersFactory', 'CourseFactory', 'GameFactory',
-     function ($scope, $http, $location, PlayersFactory, CourseFactory, GameFactory) {
+    ['$scope', '$http', '$location', 'PlayerFactory', 'CourseFactory', 'GameFactory',
+     function ($scope, $http, $location, PlayerFactory, CourseFactory, GameFactory) {
 
          $scope.newPlayerName = '';
          $scope.newCourseName = '';
          $scope.newCourseHoleCount = 9;
 
-         $scope.courseList = CourseFactory.getCourseList();
+         $scope.courseList = CourseFactory.getList();
          $scope.selectedCourseId;
 
          $scope.selectedPlayers = [];
 
-         $scope.playerList = PlayersFactory.getPlayers();
+         $scope.playerList = PlayerFactory.getList();
 
          $scope.addNewPlayer = function () {
-             var player = PlayersFactory.createPlayer($scope.newPlayerName);
+             var player = PlayerFactory.createPlayer($scope.newPlayerName);
 
              $scope.selectedPlayers.push(player.id);
              $scope.newPlayerName = '';
@@ -108,18 +108,18 @@ discGolfControllers.controller(
 
 discGolfControllers.controller(
     'GameController', 
-    ['$scope', '$routeParams','$http', '$location', 'PlayersFactory', 'CourseFactory', 'GameFactory',
-     function ($scope, $routeParams, $http, $location, PlayersFactory, CourseFactory, GameFactory) {
+    ['$scope', '$routeParams','$http', '$location', 'PlayerFactory', 'CourseFactory', 'GameFactory',
+     function ($scope, $routeParams, $http, $location, PlayerFactory, CourseFactory, GameFactory) {
 
          $scope.gameId = $routeParams.gameId;
          $scope.holeNumber = Number($routeParams.basket);
 
-         $scope.game = GameFactory.getGame($scope.gameId);
-         $scope.course = CourseFactory.getCourse($scope.game.courseId);
+         $scope.game = GameFactory.get($scope.gameId);
+         $scope.course = CourseFactory.get($scope.game.courseId);
          
          $scope.gamePlayers = [];
          angular.forEach($scope.game.playerIds, function (value, index) {
-             var player = PlayersFactory.getPlayer(value);
+             var player = PlayerFactory.get(value);
              var lastHoleScore = $scope.game.holeScores[($scope.holeNumber - 1)] !== undefined ? $scope.game.holeScores[($scope.holeNumber - 1)][player.id] : 0;
              
              this.push ({id: player.id, name: player.name, lastHoleScore: lastHoleScore});
@@ -142,9 +142,13 @@ discGolfControllers.controller(
              return total;
          }
          
+         $scope.updateCourse = function () {
+             CourseFactory.update($scope.course);
+         }
+         
          $scope.setPlayerScore = function (player, score) {
              $scope.game.setPlayerScore($scope.holeNumber, player.id, score);
-             GameFactory.updateGame($scope.game);
+             GameFactory.update($scope.game);
          }
 
          $scope.gameOver = function () {
