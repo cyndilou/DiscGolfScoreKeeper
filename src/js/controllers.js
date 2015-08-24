@@ -120,9 +120,9 @@ discGolfControllers.controller(
          $scope.gamePlayers = [];
          angular.forEach($scope.game.playerIds, function (value, index) {
              var player = PlayersFactory.getPlayer(value);
-             //player.lastHoleScore = $scope.game.holeScores[($scope.holeNumber - 1)][player.id] || 0;
+             var lastHoleScore = $scope.game.holeScores[($scope.holeNumber - 1)] !== undefined ? $scope.game.holeScores[($scope.holeNumber - 1)][player.id] : 0;
              
-             this.push(player);
+             this.push ({id: player.id, name: player.name, lastHoleScore: lastHoleScore});
          }, $scope.gamePlayers);
 
          var highScore = ($scope.course.holes[$scope.holeNumber] !== undefined ? $scope.course.holes[$scope.holeNumber].par * 5 : 15);

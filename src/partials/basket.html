@@ -27,7 +27,7 @@
     <div>
         <h4>Scores <small><a class="pull-right" href="#/games/{{game.id}}">Game Overview</a></small></h4>
         <div class="list-group">
-            <div class="list-group-item" ng-repeat="player in gamePlayers">
+            <div class="list-group-item" ng-repeat="player in gamePlayers | orderBy: 'lastHoleScore'">
                 <p>
                     <strong>{{player.name}}</strong>
                     <span class="badge pull-right">Total: {{getPlayerTotal(player.id)}}</span>
