@@ -163,3 +163,15 @@ discGolfControllers.controller(
              $location.path('games/' + $scope.game.id + '/' + ($scope.holeNumber-1));
          }
      }]);
+
+discGolfControllers.controller(
+    'SettingsController', 
+    ['$scope', 'PlayerFactory', 'CourseFactory', 'GameFactory',
+     function ($scope, PlayerFactory, CourseFactory, GameFactory) {
+
+        $scope.clearLocalData = function () {
+            PlayerFactory.deleteAll();
+            CourseFactory.deleteAll();
+            GameFactory.deleteAll();
+        }
+     }]);

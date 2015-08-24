@@ -58,10 +58,10 @@ discGolfFactories.factory(
 
             this.deleteAll = function () {
                 for (objectId in this.list) {
-                    this.deleteObject(id);
+                    this.deleteObject(objectId);
                 }
 
-                delete this.list;
+                this.list = {};
                 this.cache = {};
 
                 deleteList(this.listKey);
