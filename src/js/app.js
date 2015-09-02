@@ -91,9 +91,6 @@ discGolfApp.config(
          when('/home', {
              templateUrl: 'partials/home.html'
          }).
-         //                        when('/scorecard', {
-         //                            templateUrl: 'partials/scorecard.html'
-         //                        }).
          when('/new-game', {
              templateUrl: 'partials/newGame.html',
              controller: 'NewGameController'
@@ -102,10 +99,10 @@ discGolfApp.config(
          //                            templateUrl: 'partials/gameHistory.html'//,
          //                            //controller: 'GameListController'
          //                        }).
-         //                        when('/games/:gameId', {
-         //                            templateUrl: 'partials/game.html'//,
-         //                            //controller: 'GameController'
-         //                        }).
+         when('/games/:gameId', {
+             templateUrl: 'partials/game.html',
+             controller: 'GameController'
+         }).
          when('/games/:gameId/:basket', {
              templateUrl: 'partials/basket.html',
              controller: 'GameController'
