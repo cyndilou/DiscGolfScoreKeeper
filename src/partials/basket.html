@@ -34,7 +34,7 @@
             <div class="list-group-item" ng-repeat="player in gamePlayers | orderBy: 'lastHoleScore'">
                 <p>
                     <strong>{{player.name}}</strong>
-                    <span class="badge pull-right">Total: {{getPlayerTotal(player.id)}}</span>
+                    <span class="badge pull-right">Total: {{game.getPlayerTotalScore(player.id)}}</span>
                 </p>
                 <div style="width: 100%;overflow: auto;">
                     <div class="btn-group" data-toggle="buttons">
@@ -52,7 +52,10 @@
     </div>
 
     <div class="footer">
-        <button class="btn btn-success btn-lg pull-right pager-btn" ng-click="nextHole()" ng-hide="holeNumber == course.holeCount">
+        <button class="btn btn-success btn-lg pull-right pager-btn" 
+                ng-click="nextHole()" 
+                ng-hide="holeNumber == course.holeCount"
+                ng-disabled="!isHoleComplete()">
             Next&nbsp;
             <span class="fa fa-chevron-right"></span>
         </button>

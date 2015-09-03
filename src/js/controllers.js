@@ -117,21 +117,11 @@ discGolfControllers.controller(
          $scope.game = GameFactory.get($scope.gameId);
          $scope.course = CourseFactory.get($scope.game.courseId);
 
-         $scope.getPlayerTotal = function (playerId) {
-             var total = 0;
-
-             for (hole in $scope.game.holeScores) {
-                 total += $scope.game.holeScores[hole][playerId] || 0;
-             }
-
-             return total;
-         }
-
          $scope.gamePlayers = [];
          angular.forEach($scope.game.playerIds, function (value, index) {
              var player = PlayerFactory.get(value);
              var lastHoleScore = $scope.game.holeScores[($scope.holeNumber - 1)] !== undefined ? $scope.game.holeScores[($scope.holeNumber - 1)][player.id] : 0;
-             var totalScore = $scope.getPlayerTotal(value);
+             var totalScore = $scope.game.getPlayerTotalScore(player.id);
 
              this.push ({id: player.id, name: player.name, lastHoleScore: lastHoleScore, totalScore: totalScore});
          }, $scope.gamePlayers);
@@ -184,6 +174,20 @@ discGolfControllers.controller(
              $location.path('games/' + $scope.game.id + '/' + hole);
          }
 
+         $scope.isHoleComplete = function () {
+             if ($scope.game.holeScores[$scope.holeNumber] === undefined) {
+                 return false;
+             }
+             
+             for (index in $scope.game.playerIds) {
+                 if ($scope.game.holeScores[$scope.holeNumber][$scope.game.playerIds[index]] === undefined) {
+                     return false;
+                 }
+             }
+             
+             return true;
+         }
+
          $scope.nextHole = function () {
              $location.path('games/' + $scope.game.id + '/' + ($scope.holeNumber+1));
          }
@@ -220,7 +224,7 @@ discGolfControllers.controller(
      function ($scope, CourseFactory, GameFactory) {
 
          $scope.gameList = GameFactory.getList();
-         
+
          $scope.getCourseName = function (courseId) {
              var course = CourseFactory.get(courseId);
              return course.name;

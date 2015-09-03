@@ -33,8 +33,17 @@ function Game (properties) {
         if (this.holeScores[holeNumber] === undefined) {
             this.holeScores[holeNumber] = {};
         }
-
+        
         this.holeScores[holeNumber][playerId] = score;
+    }
+    
+    this.getPlayerTotalScore = function (playerId) {
+        var total = 0;
+        for (hole in this.holeScores) {
+            total += this.holeScores[hole][playerId] || 0;
+        }
+
+        return total;
     }
 
     this.getLastHolePlayed = function () {
@@ -42,7 +51,7 @@ function Game (properties) {
 
         do {
             lastHole++;
-            
+
             var scoresSet = true;
             if (this.holeScores[lastHole] === undefined) {
                 scoresSet = false;
@@ -55,7 +64,7 @@ function Game (properties) {
             }
 
         } while (scoresSet);
-        
+
         return (lastHole - 1);
     }
 }
