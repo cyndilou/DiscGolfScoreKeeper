@@ -10,7 +10,7 @@
                         <th class="tableInfoCell"><small>Hole</small></th>
                         <th class="tableInfoCell"><small>Feet</small></th>
                         <th class="tableInfoCell"><small>Par</small></th>
-                        <th ng-repeat="player in gamePlayers | orderBy: 'totalScore'">{{player.name}}</th>
+                        <th ng-repeat="player in getPlayerList()">{{player.name}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -18,20 +18,20 @@
                         <td class="tableInfoCell"><small>{{hole}}</small></td>
                         <td class="tableInfoCell"><small>{{course.holes[hole].distance}}</small></td>
                         <td class="tableInfoCell"><small>{{course.holes[hole].par}}</small></td>
-                        <td ng-repeat="player in gamePlayers | orderBy: 'totalScore'">{{game.holeScores[hole][player.id]}}</td>
+                        <td ng-repeat="player in getPlayerList()">{{game.holeScores[hole][player.id]}}</td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <td class="tableInfoCell"><small>Total</small></td>
                     <td class="tableInfoCell"><small>{{getTotalDistance()}}</small></td>
                     <td class="tableInfoCell"><small>{{getTotalPar()}}</small></td>
-                    <td ng-repeat="player in gamePlayers | orderBy: 'totalScore'">{{player.totalScore}}</td>
+                    <td ng-repeat="player in getPlayerList()">{{player.totalScore}}</td>
                 </tfoot>
             </table>
         </div>
     </div>
     <div class="footer">
         <button class="btn btn-block btn-lg btn-success" onClick="location.href='#/new-game'" ng-show="isGameOver()">Play Again</button>
-        <button class="btn btn-block btn-lg btn-success" ng-click="onResumeGame()" ng-hide="isGameOver()">Resume</button>
+        <button class="btn btn-block btn-lg btn-success" ng-click="resumeGame()" ng-hide="isGameOver()">Resume</button>
     </div>
 </div>
