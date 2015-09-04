@@ -4,13 +4,52 @@
     </div>
     <div class="fixed-height">
         <div class="list-group">
+            <!-- todo: order the list by game date.  See http://justinklemm.com/angularjs-filter-ordering-objects-ngrepeat/ -->
             <div class="list-group-item" ng-repeat="game in gameList">
-                <a href="#/games/{{game.id}}">{{getCourseName(game.courseId)}} <small>{{game.date | date:'short'}}</small></a>
+
+                <!--                <a href="#/games/{{game.id}}">-->
 <!--
-                <button class="transparentButton pull-right"
-                        ng-click="editPlayer(item)">
-                    <span class="fa fa-pencil"></span>
+                <a role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="fa fa-chevron-right"></span>
+                    {{getCourse(game.courseId).name}} <small>{{game.date | date:'short'}}</small>
+                </a>
+-->
+
+                <button class="transparentButton" type="button" data-toggle="collapse" data-target="#collapseExample-{{$index}}" aria-expanded="false">
+                    <span class="fa fa-chevron-right"></span>
+                    {{getCourse(game.courseId).name}} <small>{{game.date | date:'short'}}</small>
                 </button>
+                
+                
+
+                <div class="table-responsive collapse" id="collapseExample-{{$index}}" style="margin-top:10px">
+                    <table class="table table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="tableInfoCell"></th>
+                                <th class="tableInfoCell" style="max-width:50px">Total</th>
+                                <th class="tableInfoCell" ng-repeat="hole in getHoleList(game.courseId)">{{hole}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="tableInfoCell">Par</td>
+                                <td class="tableInfoCell">{{getTotalPar(game.courseId)}}</td>
+                                <td class="tableInfoCell" ng-repeat="hole in getHoleList(game.courseId)">{{getHolePar(game.courseId, hole)}}</td>
+                            </tr>
+                            <tr ng-repeat="player in getPlayerList(game.id)">
+                                <td>{{player.name}}</td>
+                                <td>{{player.totalScore}}</td>
+                                <td ng-repeat="hole in getHoleList(game.courseId)">{{getPlayerScore(game.id, player.id, hole)}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!--
+<button class="transparentButton pull-right"
+ng-click="editPlayer(item)">
+<span class="fa fa-pencil"></span>
+</button>
 -->
             </div>
         </div>

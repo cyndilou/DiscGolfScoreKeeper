@@ -178,13 +178,13 @@ discGolfControllers.controller(
              if ($scope.game.holeScores[$scope.holeNumber] === undefined) {
                  return false;
              }
-             
+
              for (index in $scope.game.playerIds) {
                  if ($scope.game.holeScores[$scope.holeNumber][$scope.game.playerIds[index]] === undefined) {
                      return false;
                  }
              }
-             
+
              return true;
          }
 
@@ -220,14 +220,74 @@ discGolfControllers.controller(
 
 discGolfControllers.controller(
     'GameListController', 
-    ['$scope', 'CourseFactory', 'GameFactory',
-     function ($scope, CourseFactory, GameFactory) {
+    ['$scope', 'PlayerFactory', 'CourseFactory', 'GameFactory',
+     function ($scope, PlayerFactory, CourseFactory, GameFactory) {
 
          $scope.gameList = GameFactory.getList();
+         $scope.playerList = {};
 
-         $scope.getCourseName = function (courseId) {
-             var course = CourseFactory.get(courseId);
-             return course.name;
+         $scope.getCourse = function (courseId) {
+             return CourseFactory.get(courseId);
          }
+
+         $scope.getHoleList = function (courseId) {
+             var course = CourseFactory.get(courseId);
+
+             var holeList = [];
+             for (var i = 1; i <= course.holeCount; i++) {
+                 holeList.push(i);
+             }
+
+             return holeList;
+         }
+
+         $scope.getPlayerList = function (gameId) {
+             if ($scope.playerList[gameId] !== undefined) {
+                 return $scope.playerList[gameId];
+             }
+
+             var game = GameFactory.get(gameId);
+             var course = CourseFactory.get(game.courseId);
+
+             var playerList = [];
+             for (index in game.playerIds) {
+                 var playerId = game.playerIds[index];
+
+                 var player = PlayerFactory.get(playerId);
+                 var total = game.getPlayerTotalScore(playerId);
+
+                 playerList.push({id: player.id, name: player.name, totalScore: total});
+             }
+
+             playerList.sort(function (player1, player2) { return player1.totalScore > player2.totalScore; });
+
+             $scope.playerList[gameId] = playerList;
+
+             return playerList;
+         }
+
+         $scope.getPlayerScore = function (gameId, playerId, hole) {
+             var game = GameFactory.get(gameId);
+             if (game.holeScores[hole] !== undefined) {
+                 return game.holeScores[hole][playerId];
+             }
+         }
+
+         $scope.getTotalPar = function (courseId) {
+             var course = CourseFactory.get(courseId);
+
+             var totalPar = 0;
+             for (hole in course.holes) {
+                 totalPar += Number(course.holes[hole].par);
+             }
+
+             return totalPar;
+         }
+
+         $scope.getHolePar = function (courseId, hole) {
+             var course = CourseFactory.get(courseId);
+             return course.holes[hole].par;
+         }
+
 
      }]);
