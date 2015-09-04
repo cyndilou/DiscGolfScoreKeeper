@@ -220,8 +220,8 @@ discGolfControllers.controller(
 
 discGolfControllers.controller(
     'GameListController', 
-    ['$scope', 'PlayerFactory', 'CourseFactory', 'GameFactory',
-     function ($scope, PlayerFactory, CourseFactory, GameFactory) {
+    ['$scope', '$location', 'PlayerFactory', 'CourseFactory', 'GameFactory',
+     function ($scope, $location, PlayerFactory, CourseFactory, GameFactory) {
 
          $scope.gameList = GameFactory.getList();
          $scope.playerList = {};
@@ -286,8 +286,28 @@ discGolfControllers.controller(
 
          $scope.getHolePar = function (courseId, hole) {
              var course = CourseFactory.get(courseId);
-             return course.holes[hole].par;
+             
+             if (course.holes[hole] !== undefined) {
+                return course.holes[hole].par;
+             }
          }
-
-
+         
+         $scope.isGameOver = function (gameId) {
+             var game = GameFactory.get(gameId);
+             var course = CourseFactory.get(game.courseId);
+             
+             var lastHolePlayed = game.getLastHolePlayed();
+             return lastHolePlayed == course.holeCount;
+         }
+         
+         $scope.deleteGame = function (gameId) {
+             GameFactory.delete(gameId);
+         }
+         
+         $scope.resumeGame = function (gameId) {
+             var game = GameFactory.get(gameId);
+             
+             var hole = game.getLastHolePlayed();
+             $location.path('games/' + game.id + '/' + hole);
+         }
      }]);

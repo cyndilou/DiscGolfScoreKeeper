@@ -41,6 +41,11 @@
     border: none;
 }
 
+.transparentButton:focus {
+    outline: none;
+    border: none;
+}
+
 .hidden {
     display: none;
 }

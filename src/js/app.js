@@ -19,6 +19,29 @@ discGolfApp.directive(
         };    
     });
 
+discGolfApp.directive(
+    'expandCollapseIcon',
+    function(){
+        return {
+            link: function(scope, el, attr) {
+
+                angular.element(el[0].querySelector('.fa')).addClass('fa-chevron-right');
+
+                el.on('hide.bs.collapse', function(ev){
+                    angular.element(el[0].querySelector('.fa'))
+                        .removeClass('fa-chevron-down')
+                        .addClass('fa-chevron-right');
+                });
+
+                el.on('show.bs.collapse', function(ev){
+                    angular.element(el[0].querySelector('.fa'))
+                        .removeClass('fa-chevron-right')
+                        .addClass('fa-chevron-down'); 
+                });
+            }
+        };
+    });
+
 //discGolfApp.directive(
 //    'flexibleWidth', 
 //    function($document) {
