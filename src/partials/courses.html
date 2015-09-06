@@ -1,0 +1,55 @@
+<div>
+    <div class="page-header">
+        <h3>Courses</h3>
+    </div>
+    <div class="fixed-height">
+        <div class="list-group">
+            <!-- todo: order the list by course name.  See http://justinklemm.com/angularjs-filter-ordering-objects-ngrepeat/ -->
+            <div class="list-group-item" ng-repeat="course in courseList" expand-collapse-icon>
+
+                <button class="transparentButton" type="button" data-toggle="collapse" data-target="#collapseExample-{{$index}}" aria-expanded="false">
+                    <span class="fa"></span>
+                    {{course.name}}
+                </button>
+
+                <button class="transparentButton pull-right" ng-click="editCourse(course.id)">
+                    <span class="fa fa-pencil"></span>
+                </button>
+
+                <div class="collapse" id="collapseExample-{{$index}}" style="margin-top:10px">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-condensed">
+                            <thead>
+                                <tr>
+                                    <th class="tableInfoCell">Hole</th>
+                                    <th class="tableInfoCell" ng-repeat="hole in getHoleList(course.id)">{{hole}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="tableInfoCell">Par</td>
+                                    <td class="tableInfoCell" ng-repeat="hole in getHoleList(course.id)">{{getHolePar(course.id, hole)}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="tableInfoCell">Feet</td>
+                                    <td class="tableInfoCell" ng-repeat="hole in getHoleList(course.id)">{{getHoleDistance(course.id, hole)}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button class="btn btn-danger btn-block" ng-click="deleteCourse(course.id)">
+                        <span class="fa fa-trash"></span>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="footer">
+        <button class="btn btn-block btn-lg btn-success" ng-click="addCourse()">Add Course</button>
+    </div>
+</div>

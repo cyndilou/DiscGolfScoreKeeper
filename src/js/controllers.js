@@ -295,3 +295,42 @@ discGolfControllers.controller(
              $location.path('games/' + game.id + '/' + hole);
          }
      }]);
+
+discGolfControllers.controller(
+    'CourseController', 
+    ['$scope', '$location', 'CourseFactory',
+     function ($scope, $location, CourseFactory) {
+
+         $scope.courseList = CourseFactory.getList();
+         
+         $scope.editCourse = function (courseId) {
+             $location.path('courses/' + courseId);
+         }
+         
+         $scope.getHoleList = function (courseId) {
+             var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
+
+             var holeList = [];
+             for (var i = 1; i <= course.holeCount; i++) {
+                 holeList.push(i);
+             }
+
+             return holeList;
+         }
+         
+         $scope.getHolePar = function (courseId, hole) {
+             var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
+             
+             if (course.holes[hole] !== undefined) {
+                 return course.holes.par;
+             }
+         }
+         
+         $scope.getHoleDistance = function (courseId, hole) {
+             var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
+             
+             if (course.holes[hole] !== undefined) {
+                 return course.holes.distance;
+             }
+         }
+     }]);

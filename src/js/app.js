@@ -120,7 +120,7 @@ discGolfApp.config(
          }).
          when('/games', {
              templateUrl: 'partials/games.html',
-             controller: 'GameListController'
+             controller: 'GameController'
          }).
          when('/games/:gameId', {
              templateUrl: 'partials/game.html',
@@ -128,15 +128,16 @@ discGolfApp.config(
          }).
          when('/games/:gameId/:basket', {
              templateUrl: 'partials/basket.html',
-             controller: 'GameController'
+             controller: 'BasketController'
          }).
          when('/players', {
              templateUrl: 'partials/players.html',
              controller: 'PlayerController'
          }).
-         //                        when('/courses', {
-         //                            templateUrl: 'partials/courses.html'
-         //                        }).
+         when('/courses', {
+             templateUrl: 'partials/courses.html',
+             controller: 'CourseController'
+         }).
          when('/settings', {
              templateUrl: 'partials/settings.html',
              controller: 'SettingsController'
