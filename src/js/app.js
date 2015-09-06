@@ -138,6 +138,10 @@ discGolfApp.config(
              templateUrl: 'partials/courses.html',
              controller: 'CourseController'
          }).
+         when('/courses/:courseId', {
+             templateUrl: 'partials/course.html',
+             controller: 'CourseController'
+         }).
          when('/settings', {
              templateUrl: 'partials/settings.html',
              controller: 'SettingsController'

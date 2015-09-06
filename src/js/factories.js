@@ -43,6 +43,7 @@ discGolfFactories.factory(
 
             this.update = function (object) {
                 this.list[object.id] = object.toListItem();
+                this.cache[object.id] = object;
 
                 this.saveObject(object);
                 saveList(this.listKey, this.list);

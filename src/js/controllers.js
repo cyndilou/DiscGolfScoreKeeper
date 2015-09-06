@@ -298,13 +298,28 @@ discGolfControllers.controller(
 
 discGolfControllers.controller(
     'CourseController', 
-    ['$scope', '$location', 'CourseFactory',
-     function ($scope, $location, CourseFactory) {
+    ['$scope', '$routeParams', '$location', 'CourseFactory',
+     function ($scope, $routeParams, $location, CourseFactory) {
 
+         $scope.courseId = $routeParams.courseId;
+         if ($scope.courseId !== undefined) {
+             $scope.courseOriginal = CourseFactory.get($scope.courseId);
+             $scope.course = angular.copy($scope.courseOriginal);
+         }
+         
          $scope.courseList = CourseFactory.getList();
          
          $scope.editCourse = function (courseId) {
-             $location.path('courses/' + courseId);
+             navigateToCourse(courseId);
+         }
+         
+         $scope.deleteCourse = function (courseId) {
+             CourseFactory.delete(courseId);
+         }
+         
+         $scope.addCourse = function () {
+             var course = CourseFactory.createCourse();
+             navigateToCourse(course.id);
          }
          
          $scope.getHoleList = function (courseId) {
@@ -322,7 +337,7 @@ discGolfControllers.controller(
              var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
              
              if (course.holes[hole] !== undefined) {
-                 return course.holes.par;
+                 return course.holes[hole].par;
              }
          }
          
@@ -330,7 +345,25 @@ discGolfControllers.controller(
              var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
              
              if (course.holes[hole] !== undefined) {
-                 return course.holes.distance;
+                 return course.holes[hole].distance;
              }
+         }
+         
+         $scope.save = function () {
+             CourseFactory.update($scope.course);
+             navigateToCourse();
+         }
+         
+         $scope.cancel = function () {
+             navigateToCourse();
+         }
+         
+         function navigateToCourse (courseId) {
+             var path = 'courses/';
+             if (courseId !== undefined) {
+                 path += courseId;
+             }
+             
+             $location.path(path);
          }
      }]);
