@@ -33,7 +33,7 @@ discGolfControllers.controller(
          };
 
          $scope.addPlayer = function () {
-             var player = PlayerFactory.createPlayer();
+             var player = PlayerFactory.create();
 
              var newItem = {
                  player: player,
@@ -73,14 +73,14 @@ discGolfControllers.controller(
          $scope.playerList = PlayerFactory.getList();
 
          $scope.addNewPlayer = function () {
-             var player = PlayerFactory.createPlayer($scope.newPlayerName);
+             var player = PlayerFactory.create($scope.newPlayerName);
 
              $scope.selectedPlayers.push(player.id);
              $scope.newPlayerName = '';
          };
 
          $scope.addCourse = function () {
-             var course = CourseFactory.createCourse($scope.newCourseName, $scope.newCourseHoleCount);
+             var course = CourseFactory.create($scope.newCourseName, $scope.newCourseHoleCount);
 
              $scope.selectedCourseId = course.id;
              $scope.newCourseName = '';
@@ -100,7 +100,7 @@ discGolfControllers.controller(
          };
 
          $scope.onStartGame = function () {
-             var game = GameFactory.createGame($scope.selectedCourseId, $scope.selectedPlayers);
+             var game = GameFactory.create($scope.selectedCourseId, $scope.selectedPlayers);
 
              $location.path('games/' + game.id + '/1');
          };
@@ -320,7 +320,7 @@ discGolfControllers.controller(
          }
 
          $scope.addCourse = function () {
-             var course = CourseFactory.createCourse();
+             var course = CourseFactory.create();
              navigateToCourse(course.id);
          }
 

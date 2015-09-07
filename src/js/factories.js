@@ -9,63 +9,93 @@ discGolfFactories.factory(
             this.list = loadList(this.listKey);
             this.cache = {};
 
-            this.loadObject = function (id) {
+            this._loadObject = function (id) {
                 return JSON.parse(localStorage.getItem(id));
             }
 
-            this.saveObject = function (object) {
+            this._saveObject = function (object) {
                 localStorage.setItem(object.id, JSON.stringify(object));
             }
 
-            this.deleteObject = function (id) {
+            this._deleteObject = function (id) {
                 localStorage.removeItem(id);
             }
 
-            this.getList = function () {
+            this._getList = function () {
                 return this.list;
             }
 
-            this.get = function (id) {    
+            this._get = function (id) {    
                 if (this.cache[id] === undefined) {
-                    this.cache[id] = this.loadObject(id);
+                    this.cache[id] = this._loadObject(id);
                 }
 
                 return this.cache[id];
             }
 
-            this.create = function (object) {        
+            this._create = function (object) {        
                 this.cache[object.id] = object;
                 this.list[object.id] = object.toListItem();
 
-                this.saveObject(object);
+                this._saveObject(object);
                 saveList(this.listKey, this.list);
             }
 
-            this.update = function (object) {
+            this._update = function (object) {
                 this.list[object.id] = object.toListItem();
                 this.cache[object.id] = object;
 
-                this.saveObject(object);
+                this._saveObject(object);
                 saveList(this.listKey, this.list);
             }
 
-            this.delete = function (id) {
+            this._delete = function (id) {
+                var object = this._get(id);
+                if (hasReferences(object)) {
+                    object['isDeleted'] = true;
+                    this.update(object);
+                }
+                else {
+                    delete this.cache[id];
+                    this._deleteObject(id);
+                }
+
                 delete this.list[id];
-                delete this.cache[id];
-
-                this.deleteObject(id);
                 saveList(this.listKey, this.list);
             }
 
-            this.deleteAll = function () {
+            this._deleteAll = function () {
                 for (objectId in this.list) {
-                    this.deleteObject(objectId);
+                    this._deleteObject(objectId);
                 }
 
                 this.list = {};
                 this.cache = {};
 
                 deleteList(this.listKey);
+            }
+
+            this._addReference = function (id, referenceId) {
+                var object = this._get(id);
+                if (object['references'] === undefined) {
+                    object['references'] = {};
+                }
+
+                object['references'][referenceId] = referenceId;
+                this._saveObject(object);
+            }
+
+            this._removeReference = function (id, referenceId) {
+                var object = this._get(id);
+                if (object['references'] !== undefined) {
+
+                    delete object['references'][referenceId];
+                    this._saveObject(object);
+
+                    if (object['isDeleted'] === true) {
+                        this._delete(id);
+                    }
+                }
             }
 
             function loadList (listKey) {
@@ -79,6 +109,21 @@ discGolfFactories.factory(
             function deleteList (listKey) {
                 localStorage.removeItem(listKey);
             }
+
+            function hasReferences (object) {
+                var referencesList = object['references'];
+                if ((referencesList === undefined) || (Object.keys(referencesList).length == 0)) {
+                    return false;
+                }
+
+                for (index in referencesList) {
+                    if (localStorage.getItem(referencesList[index]) != null) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         };
 
         return ObjectFactory;
@@ -90,19 +135,35 @@ discGolfFactories.factory(
     function (ObjectFactory) {
         var service = new ObjectFactory('playerList');
 
-        service.loadObject = function (id) {
+        service._loadObject = function (id) {
             var item = localStorage.getItem(id);
             if (item != null) {
                 return (new Player(JSON.parse(item)));
             }
         }
 
-        service.createPlayer = function (name) {
+        service.getList = function () {
+            return service._getList();
+        }
+
+        service.get = function (id) {
+            return service._get(id);
+        }
+
+        service.create = function (name) {
             var player = new Player({name: name});
 
-            service.create(player);
+            service._create(player);
 
             return player;
+        }
+        
+        service.update = function (object) {
+            return service._update(object);
+        }
+        
+        service.delete = function (id) {
+            return service._delete(id);
         }
 
         return service;
@@ -114,19 +175,35 @@ discGolfFactories.factory(
     function (ObjectFactory) {
         var service = new ObjectFactory('courseList');
 
-        service.loadObject = function (id) {
+        service._loadObject = function (id) {
             var item = localStorage.getItem(id);
             if (item != null) {
                 return (new Course(JSON.parse(item)));
             }
         }
 
-        service.createCourse = function (name, holeCount) {
+        service.getList = function () {
+            return service._getList();
+        }
+
+        service.get = function (id) {
+            return service._get(id);
+        }
+
+        service.create = function (name, holeCount) {
             var course = new Course({name: name, holeCount: holeCount});
 
-            service.create(course);
+            service._create(course);
 
             return course;
+        }
+        
+        service.update = function (object) {
+            return service._update(object);
+        }
+        
+        service.delete = function (id) {
+            return service._delete(id);
         }
 
         return service;
@@ -135,23 +212,54 @@ discGolfFactories.factory(
 
 discGolfFactories.factory(
     'GameFactory', 
-    function (ObjectFactory) {
-        var service = new ObjectFactory('gameList');
+    ['ObjectFactory', 'CourseFactory', 'PlayerFactory',
+     function (ObjectFactory, CourseFactory, PlayerFactory) {
+         var service = new ObjectFactory('gameList');
 
-        service.loadObject = function (id) {
-            var item = localStorage.getItem(id);
-            if (item != null) {
-                return (new Game(JSON.parse(item)));
-            }
+         service._loadObject = function (id) {
+             var item = localStorage.getItem(id);
+             if (item != null) {
+                 return (new Game(JSON.parse(item)));
+             }
+         }
+
+         service.getList = function () {
+             return service._getList();
+         }
+
+         service.get = function (id) {
+             return service._get(id);
+         }
+
+         service.create = function (courseId, playerIds) {
+             var game = new Game({courseId: courseId, playerIds: playerIds});
+
+             CourseFactory._addReference(courseId, game.id);
+
+             for (var i = 0; i < playerIds.length; i++) {
+                 PlayerFactory._addReference(playerIds[i], game.id);
+             }
+
+             service._create(game);
+
+             return game;
+         }
+         
+         service.update = function (object) {
+            return service._update(object);
         }
 
-        service.createGame = function (courseId, playerIds) {
-            var game = new Game({courseId: courseId, playerIds: playerIds});
+         service.delete = function (id) {
+             var game = this._get(id);
 
-            service.create(game);
+             CourseFactory._removeReference(game.courseId, game.id);
 
-            return game;
-        }
+             for (var i = 0; i < game.playerIds.length; i++) {
+                 PlayerFactory._removeReference(game.playerIds[i], game.id);
+             }
 
-        return service;
-    });
+             service._delete(id);
+         }
+
+         return service;
+     }]);

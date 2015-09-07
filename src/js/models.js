@@ -1,9 +1,11 @@
 function Player (properties) {
     this.id = properties.id || createUniqueId();
     this.name = properties.name || '';
+    this.isDeleted = properties.isDeleted || false;
+    this.references = properties.references || {};
 
     this.toListItem = function () {
-        return { id: this.id, name: this.name }
+        return { id: this.id, name: this.name, isDeleted: this.isDeleted };
     }
 }
 
@@ -12,9 +14,11 @@ function Course (properties) {
     this.name = properties.name || name;
     this.holeCount = properties.holeCount || 9;
     this.holes = properties.holes || {};
+    this.isDeleted = properties.isDeleted || false;
+    this.references = properties.references || {};
 
     this.toListItem = function () {
-        return { id: this.id, name: this.name, holeCount: this.holeCount};
+        return { id: this.id, name: this.name, holeCount: this.holeCount, isDeleted: this.isDeleted };
     }
 }
 
