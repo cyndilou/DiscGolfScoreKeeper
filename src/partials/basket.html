@@ -1,6 +1,6 @@
 <div>
     <div class="page-header">
-        <h3>{{course.name}} <small>Hole {{holeNumber}}</small></h3>
+        <h4>{{course.name}} <small>Hole {{holeNumber}}</small></h4>
 
         <div class="my-table">
             <div class="my-row">
@@ -28,8 +28,10 @@
         </div>
     </div>
 
-    <div>
-        <h4>Scores <small><a class="pull-right" href="#/games/{{game.id}}">Game Overview</a></small></h4>
+    <div class="page-body" page-body>
+        <h4>Scores 
+            <small><a class="pull-right" href="#/games/{{game.id}}">Game Overview</a></small>
+        </h4>
         <div class="list-group">
             <div class="list-group-item" ng-repeat="player in gamePlayers | orderBy: 'lastHoleScore'">
                 <p>
@@ -51,7 +53,7 @@
         </div>
     </div>
 
-    <div class="footer">
+    <div class="page-footer">
         <button class="btn btn-success btn-lg pull-right pager-btn" 
                 ng-click="nextHole()" 
                 ng-hide="holeNumber == course.holeCount"
@@ -63,7 +65,10 @@
             <span class="fa fa-chevron-left"></span>
             &nbsp;Previous
         </button>
-        <button class="btn btn-success btn-lg pull-right pager-btn" ng-click="gameOver()" ng-show="holeNumber == course.holeCount">
+        <button class="btn btn-success btn-lg pull-right pager-btn" 
+                ng-click="gameOver()" 
+                ng-show="holeNumber == course.holeCount"
+                ng-disabled="!isHoleComplete()">
             Done!
         </button>
     </div>

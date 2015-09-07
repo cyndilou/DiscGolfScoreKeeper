@@ -42,6 +42,21 @@ discGolfApp.directive(
         };
     });
 
+discGolfApp.directive(
+    'pageBody',
+    function(){
+        return {
+            link: function(scope, el, attr) {
+
+                var headerHeight = $('.page-header').outerHeight();
+                var footerHeight = $('.page-footer').outerHeight();
+                var bodyHeight = $(window).height() - headerHeight - footerHeight - 85;
+
+                el.height(bodyHeight + 'px');
+            }
+        };
+    });
+
 //discGolfApp.directive(
 //    'flexibleWidth', 
 //    function($document) {
@@ -146,16 +161,11 @@ discGolfApp.config(
              templateUrl: 'partials/settings.html',
              controller: 'SettingsController'
          }).
-         //                        when('/about', {
-         //                            templateUrl: 'partials/about.html'
-         //                        }).
-         //      when('/phones/:phoneId', {
-         //        templateUrl: 'partials/phone-detail.html',
-         //        controller: 'PhoneDetailCtrl'
-         //      }).
+         when('/about', {
+             templateUrl: 'partials/about.html'
+         }).
          otherwise({
-             //redirectTo: '/home'
-             templateUrl: 'partials/undefined.html'
+             redirectTo: '/home'
          });
      }]);
 

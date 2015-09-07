@@ -1,11 +1,14 @@
 <div>
     <div class="page-header">
-        <h4><small>Course Name:</small></h4>
-        <input id="courseName" type="text" class="form-control" placeholder="Course Name" ng-model="course.name">
+        <div ng-class="{'has-error':course.name == ''}">
+            <h4><small>Course Name:</small></h4>
+            <input id="courseName" type="text" class="form-control" placeholder="Course Name" ng-model="course.name" show-focus="true">
+        </div>
     </div>
-    <div>
+
+    <div class="page-body" page-body>
         <h4><small>Hole Count:</small></h4>
-        <div class="input-group">
+        <div class="input-group" ng-class="{'has-error':course.holeCount <= 0}">
             <input type="number" min="1" max="100" class="form-control" placeholder="Hole Count" aria-describedby="holeCount"
                    ng-model="course.holeCount">
             <span class="input-group-addon" id="holeCount">holes</span>
@@ -36,16 +39,19 @@
             </table>
         </div>
     </div>
-    <div class="footer">
+
+    <div class="page-footer">
         <div class="btn-group btn-group-justified" role="group">
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default" ng-click="cancel()">
+                <button type="button" class="btn btn-default btn-lg" ng-click="cancel()">
                     <span class="fa fa-close"></span>
                     Cancel
                 </button>
             </div>
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-success" ng-click="save()">
+                <button type="button" class="btn btn-success btn-lg" 
+                        ng-click="save()"
+                        ng-disabled="course.name == '' || course.holeCount <= 0">
                     <span class="fa fa-check"></span>
                     Done
                 </button>

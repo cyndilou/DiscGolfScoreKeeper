@@ -1,8 +1,9 @@
 <div>
     <div class="page-header">
-        <h3>Players</h3>
+        <h4>Players</h4>
     </div>
-    <div class="fixed-height">
+    
+    <div class="page-body" page-body>
         <div class="list-group">
             <div class="list-group-item" ng-repeat="item in editablePlayerList">
                 <div ng-hide="item.editMode">
@@ -15,13 +16,13 @@
                 <div ng-show="item.editMode">
                     <form class="form-inline">
                         <div class="form-group">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Name" ng-model="item.temp.name" show-focus="item.editMode">
+                            <div class="input-group" ng-class="{'has-error':item.temp.name == ''}">
+                                <input type="text" class="form-control" placeholder="Player Name" ng-model="item.temp.name" show-focus="item.editMode">
                                 <span class="input-group-btn">
                                     <button class="btn btn-default" type="button" ng-click="endEdit(item, false)">
                                         <span class="fa fa-close"></span>
                                     </button>
-                                    <button class="btn btn-success" type="submit" ng-click="endEdit(item, true)">
+                                    <button class="btn btn-success" type="submit" ng-click="endEdit(item, true)" ng-disabled="item.temp.name == ''">
                                         <span class="fa fa-check"></span>
                                     </button>
                                 </span>
@@ -39,9 +40,7 @@
         </div>
     </div>
     
-    <br>
-
-    <div class="footer">
+    <div class="page-footer">
         <button class="btn btn-block btn-lg btn-success" ng-click="addPlayer()">Add Player</button>
     </div>
 

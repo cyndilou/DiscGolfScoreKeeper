@@ -91,7 +91,10 @@ discGolfFactories.factory(
         var service = new ObjectFactory('playerList');
 
         service.loadObject = function (id) {
-            return (new Player(JSON.parse(localStorage.getItem(id))));
+            var item = localStorage.getItem(id);
+            if (item != null) {
+                return (new Player(JSON.parse(item)));
+            }
         }
 
         service.createPlayer = function (name) {
@@ -112,7 +115,10 @@ discGolfFactories.factory(
         var service = new ObjectFactory('courseList');
 
         service.loadObject = function (id) {
-            return (new Course(JSON.parse(localStorage.getItem(id))));
+            var item = localStorage.getItem(id);
+            if (item != null) {
+                return (new Course(JSON.parse(item)));
+            }
         }
 
         service.createCourse = function (name, holeCount) {
@@ -131,9 +137,12 @@ discGolfFactories.factory(
     'GameFactory', 
     function (ObjectFactory) {
         var service = new ObjectFactory('gameList');
-        
+
         service.loadObject = function (id) {
-            return (new Game(JSON.parse(localStorage.getItem(id))));
+            var item = localStorage.getItem(id);
+            if (item != null) {
+                return (new Game(JSON.parse(item)));
+            }
         }
 
         service.createGame = function (courseId, playerIds) {

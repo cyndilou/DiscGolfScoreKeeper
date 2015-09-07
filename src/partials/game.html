@@ -1,8 +1,9 @@
 <div>
     <div class="page-header">
-        <h3>{{course.name}} <small>{{game.date | date:'short'}}</small></h3>
+        <h4>{{course.name}} <small>{{game.date | date:'short'}}</small></h4>
     </div>
-    <div>
+    
+    <div class="page-body" page-body>
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
@@ -10,7 +11,7 @@
                         <th class="tableInfoCell"><small>Hole</small></th>
                         <th class="tableInfoCell"><small>Feet</small></th>
                         <th class="tableInfoCell"><small>Par</small></th>
-                        <th ng-repeat="player in getPlayerList()">{{player.name}}</th>
+                        <th class="tableInfoCell" ng-repeat="player in getPlayerList()">{{player.name}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,7 +31,8 @@
             </table>
         </div>
     </div>
-    <div class="footer">
+    
+    <div class="page-footer">
         <button class="btn btn-block btn-lg btn-success" onClick="location.href='#/new-game'" ng-show="isGameOver()">Play Again</button>
         <button class="btn btn-block btn-lg btn-success" ng-click="resumeGame()" ng-hide="isGameOver()">Resume</button>
     </div>

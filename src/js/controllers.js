@@ -33,7 +33,7 @@ discGolfControllers.controller(
          };
 
          $scope.addPlayer = function () {
-             var player = PlayerFactory.createPlayer("New Player");
+             var player = PlayerFactory.createPlayer();
 
              var newItem = {
                  player: player,
@@ -214,7 +214,7 @@ discGolfControllers.controller(
              if (gameId === undefined) {
                  gameId = $scope.game.id;
              }
-             
+
              if ($scope.playerList[gameId] !== undefined) {
                  return $scope.playerList[gameId];
              }
@@ -227,9 +227,11 @@ discGolfControllers.controller(
                  var playerId = game.playerIds[index];
 
                  var player = PlayerFactory.get(playerId);
-                 var total = game.getPlayerTotalScore(playerId);
+                 if (player !== undefined) {
+                     var total = game.getPlayerTotalScore(playerId);
 
-                 playerList.push({id: player.id, name: player.name, totalScore: total});
+                     playerList.push({id: player.id, name: player.name, totalScore: total});
+                 }
              }
 
              playerList.sort(function (player1, player2) { return player1.totalScore > player2.totalScore; });
@@ -256,10 +258,10 @@ discGolfControllers.controller(
 
              return totalPar;
          }
-         
+
          $scope.getTotalDistance = function (courseId) {
              var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
-             
+
              var totalDistance = 0;
              for (hole in $scope.course.holes) {
                  totalDistance += Number($scope.course.holes[hole].distance);
@@ -306,22 +308,22 @@ discGolfControllers.controller(
              $scope.courseOriginal = CourseFactory.get($scope.courseId);
              $scope.course = angular.copy($scope.courseOriginal);
          }
-         
+
          $scope.courseList = CourseFactory.getList();
-         
+
          $scope.editCourse = function (courseId) {
              navigateToCourse(courseId);
          }
-         
+
          $scope.deleteCourse = function (courseId) {
              CourseFactory.delete(courseId);
          }
-         
+
          $scope.addCourse = function () {
              var course = CourseFactory.createCourse();
              navigateToCourse(course.id);
          }
-         
+
          $scope.getHoleList = function (courseId) {
              var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
 
@@ -332,38 +334,38 @@ discGolfControllers.controller(
 
              return holeList;
          }
-         
+
          $scope.getHolePar = function (courseId, hole) {
              var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
-             
+
              if (course.holes[hole] !== undefined) {
                  return course.holes[hole].par;
              }
          }
-         
+
          $scope.getHoleDistance = function (courseId, hole) {
              var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
-             
+
              if (course.holes[hole] !== undefined) {
                  return course.holes[hole].distance;
              }
          }
-         
+
          $scope.save = function () {
              CourseFactory.update($scope.course);
              navigateToCourse();
          }
-         
+
          $scope.cancel = function () {
              navigateToCourse();
          }
-         
+
          function navigateToCourse (courseId) {
              var path = 'courses/';
              if (courseId !== undefined) {
                  path += courseId;
              }
-             
+
              $location.path(path);
          }
      }]);

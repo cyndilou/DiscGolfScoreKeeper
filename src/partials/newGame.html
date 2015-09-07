@@ -1,17 +1,19 @@
 <div>
     <div class="page-header">
-        <h3>New Game</h3>
+        <h4>New Game</h4>
     </div>
-    <div class="fixed-height">
+    <div class="page-body" page-body>
         <div class="panel panel-default">
             <div class="panel-heading">Course</div>
             <div class="panel-body">
 
-                <select class="form-control" 
-                        ng-model="selectedCourseId"
-                        ng-options="id as toOptionDisplay(course) for (id, course) in courseList">
-                    <option value="" disabled>-- select course --</option>
-                </select>
+                <div ng-class="{'has-error':selectedCourseId === undefined}">
+                    <select class="form-control" 
+                            ng-model="selectedCourseId"
+                            ng-options="id as toOptionDisplay(course) for (id, course) in courseList">
+                        <option value="" disabled>-- select course --</option>
+                    </select>
+                </div>
 
                 <div class="input-group topMargin">
                     <input type="text" class="form-control" placeholder="New Course" ng-model="newCourseName">
@@ -59,7 +61,7 @@
         </div>
     </div>
 
-    <div class="footer">
+    <div class="page-footer">
         <button class="btn btn-block btn-lg btn-success" ng-click="onStartGame()" ng-disabled="selectedCourseId === undefined || selectedPlayers.length == 0">
             <span class="fa fa-play"></span>
             Play
