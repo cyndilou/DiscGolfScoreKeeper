@@ -19,16 +19,20 @@
                     <input type="text" class="form-control" placeholder="New Course" ng-model="newCourseName">
 
                     <div class="input-group-btn" data-toggle="buttons">
-                        <label class="btn btn-default active" ng-click="newCourseHoleCount = 9">
-                            <input type="radio" name="holeCount" value="9"> 9 Holes
-                        </label> 
-                        <label class="btn btn-default" ng-click="newCourseHoleCount = 18">
-                            <input type="radio" name="holeCount" value="18"> 18 Holes
-                        </label>
-                        <button class="btn btn-success" type="button" ng-click="addCourse()">
+                        <button class="btn btn-success" type="button" ng-click="addCourse()" ng-disabled="newCourseName == ''">
                             <span class="fa fa-plus"></span>
                         </button>
                     </div>
+                </div>
+
+                <div class="btn-group btn-group-justified topMargin" role="group" data-toggle="buttons">
+                        <label class="btn btn-default active" ng-click="newCourseHoleCount = 9">
+                            <input type="radio" name="holeCount" value="9"> 9 Holes
+                        </label>
+
+                        <label class="btn btn-default" ng-click="newCourseHoleCount = 18">
+                            <input type="radio" name="holeCount" value="18"> 18 Holes
+                        </label>
                 </div>
             </div>
         </div>
@@ -52,7 +56,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control" ng-model="newPlayerName" placeholder="New Player Name">
                     <span class="input-group-btn">
-                        <button class="btn btn-success" type="button" ng-click="addNewPlayer()">
+                        <button class="btn btn-success" type="button" ng-click="addNewPlayer()" ng-disabled="newPlayerName == ''">
                             <span class="fa fa-plus"></span>
                         </button>
                     </span>

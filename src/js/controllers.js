@@ -175,9 +175,9 @@ discGolfControllers.controller(
      function ($scope, PlayerFactory, CourseFactory, GameFactory) {
 
          $scope.clearLocalData = function () {
+             GameFactory.deleteAll();
              PlayerFactory.deleteAll();
              CourseFactory.deleteAll();
-             GameFactory.deleteAll();
          }
      }]);
 

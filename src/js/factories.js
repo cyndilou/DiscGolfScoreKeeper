@@ -66,7 +66,7 @@ discGolfFactories.factory(
 
             this._deleteAll = function () {
                 for (objectId in this.list) {
-                    this._deleteObject(objectId);
+                    this.delete(objectId);
                 }
 
                 this.list = {};
@@ -165,6 +165,10 @@ discGolfFactories.factory(
         service.delete = function (id) {
             return service._delete(id);
         }
+        
+        service.deleteAll = function () {
+            return service._deleteAll();
+        }
 
         return service;
     }
@@ -204,6 +208,10 @@ discGolfFactories.factory(
         
         service.delete = function (id) {
             return service._delete(id);
+        }
+        
+        service.deleteAll = function () {
+            return service._deleteAll();
         }
 
         return service;
@@ -260,6 +268,10 @@ discGolfFactories.factory(
 
              service._delete(id);
          }
+         
+         service.deleteAll = function () {
+            return service._deleteAll();
+        }
 
          return service;
      }]);
