@@ -44,18 +44,34 @@ discGolfApp.directive(
 
 discGolfApp.directive(
     'pageBody',
-    function(){
+    ['$window',
+    function($window) {
         return {
             link: function(scope, el, attr) {
 
-                var headerHeight = $('.page-header').outerHeight();
-                var footerHeight = $('.page-footer').outerHeight();
-                var bodyHeight = $(window).height() - headerHeight - footerHeight - 85;
+                var window = angular.element($window);
+                window.bind('resize', function () {
+                    scope.$apply();
+                });
+                
+                function resizeBody (windowHeight) {
+                    var headerHeight = $('.page-header').outerHeight();
+                    var footerHeight = $('.page-footer').outerHeight();
+                    var bodyHeight = windowHeight - headerHeight - footerHeight - 85;
 
-                el.height(bodyHeight + 'px');
+                    el.height(bodyHeight + 'px');
+                }
+
+                scope.$watch(function() {
+                    return $window.innerHeight;
+                }, function(value) {
+                    resizeBody(value);
+                });
+
+
             }
         };
-    });
+    }]);
 
 //discGolfApp.directive(
 //    'flexibleWidth', 
