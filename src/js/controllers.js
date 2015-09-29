@@ -5,54 +5,57 @@ discGolfControllers.controller(
     ['$scope', '$http', 'PlayerFactory',
      function ($scope, $http, PlayerFactory) {
 
-         var playerList = PlayerFactory.getList();
-
-         $scope.editablePlayerList = [];
-         angular.forEach(playerList, function (value, index) {
-             this.push({
-                 player: PlayerFactory.get(value.id),
-                 editMode: false
+         $scope.loadPlayers = function () {
+             PlayerFactory.getList().then( function (response) {
+                 $scope.playerList = response.players;
+             }).catch( function (err) {
+                 console.error(err);
              });
-         }, $scope.editablePlayerList);
+         }
 
-         $scope.editPlayer = function (item) {
-             item.editMode = true;
-             item.temp = {
-                 name: item.player.name
+         $scope.loadPlayers();
+
+         $scope.tempPlayers = {};
+
+         $scope.editPlayer = function (player) {
+             $scope.tempPlayers[player._id] = {
+                 name: player.name
              };
          };
 
-         $scope.endEdit = function (item, saveChanges) {
+         $scope.endEdit = function (player, saveChanges) {
              if (saveChanges == true) {
-                 item.player.name = item.temp.name;
-                 PlayerFactory.update(item.player);
+                 player.name = $scope.tempPlayers[player._id].name;
+                 PlayerFactory.update(player);
              }
 
-             item.temp = null;
-             item.editMode = false;
+             delete $scope.tempPlayers[player._id];
          };
 
          $scope.addPlayer = function () {
-             var player = PlayerFactory.create();
-
-             var newItem = {
-                 player: player,
-                 editMode: false
-             };
-
-             $scope.editablePlayerList.push(newItem);
-             $scope.editPlayer(newItem);
+             PlayerFactory.create('').then(function(res) {
+                 $scope.tempPlayers[res.id] = {
+                     name: ''
+                 };
+                 
+                 PlayerFactory.get(res.id).then(function (response) {
+                     $scope.playerList.push(response.player);
+                 });
+             });
          }
 
-         $scope.deletePlayer = function (item) {
-             for (var i = 0; i < $scope.editablePlayerList.length; i++) {
-                 if (item.player.id == $scope.editablePlayerList[i].player.id) {
-                     $scope.editablePlayerList.splice(i, 1);
-                     break;
+         $scope.deletePlayer = function (player) {
+             PlayerFactory.delete(player._id).then( function (response) {
+                 var index = $scope.playerList.indexOf(player);
+                 if (index == -1) {
+                     $scope.loadPlayers();
                  }
-             }
-
-             PlayerFactory.delete(item.player.id);
+                 else {
+                     $scope.playerList.splice(index, 1);
+                 }
+                 
+                 delete $scope.tempPlayers[player._id];
+             });
          }
      }]);
 
@@ -175,9 +178,16 @@ discGolfControllers.controller(
      function ($scope, PlayerFactory, CourseFactory, GameFactory) {
 
          $scope.clearLocalData = function () {
-             GameFactory.deleteAll();
-             PlayerFactory.deleteAll();
-             CourseFactory.deleteAll();
+             PlayerFactory.getList(false).then(function (response) {
+                 console.log(response);
+                 var list = response.players;
+                 for (var i = 0; i < list.length; i++) {
+                     PlayerFactory.delete(list[i]._id).then(function (response) { console.log(response); });
+                 }
+             }).catch( function (err) {
+                 console.error(err);
+             });
+             
          }
      }]);
 
