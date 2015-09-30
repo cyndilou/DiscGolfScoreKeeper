@@ -37,7 +37,7 @@ discGolfControllers.controller(
                  $scope.tempPlayers[res.id] = {
                      name: ''
                  };
-                 
+
                  PlayerFactory.get(res.id).then(function (response) {
                      $scope.playerList.push(response.player);
                  });
@@ -53,7 +53,7 @@ discGolfControllers.controller(
                  else {
                      $scope.playerList.splice(index, 1);
                  }
-                 
+
                  delete $scope.tempPlayers[player._id];
              });
          }
@@ -68,44 +68,56 @@ discGolfControllers.controller(
          $scope.newCourseName = '';
          $scope.newCourseHoleCount = 9;
 
-         $scope.courseList = CourseFactory.getList();
-         $scope.selectedCourseId;
+         CourseFactory.getList().then( function (response) {
+             $scope.courseList = response.courses;
+         }).catch( function (err) {
+             console.error(err);
+         });
 
+         PlayerFactory.getList().then( function (response) {
+             $scope.playerList = response.players;
+         }).catch( function (err) {
+             console.error(err);
+         });
+
+         $scope.selectedCourseId;
          $scope.selectedPlayers = [];
 
-         $scope.playerList = PlayerFactory.getList();
-
          $scope.addNewPlayer = function () {
-             var player = PlayerFactory.create($scope.newPlayerName);
+             PlayerFactory.create($scope.newPlayerName).then(function(response) {
+                 $scope.selectedPlayers.push(response.id);
+                 $scope.newPlayerName = '';
 
-             $scope.selectedPlayers.push(player.id);
-             $scope.newPlayerName = '';
-         };
+                 PlayerFactory.get(response.id).then(function (response) {
+                     $scope.playerList.push(response.player);
+                 });
+             });
+         }
 
          $scope.addCourse = function () {
-             var course = CourseFactory.create($scope.newCourseName, $scope.newCourseHoleCount);
+             CourseFactory.create($scope.newCourseName, $scope.newCourseHoleCount).then(function(response) {
+                 $scope.newCourseName = '';
 
-             $scope.selectedCourseId = course.id;
-             $scope.newCourseName = '';
+                 CourseFactory.get(response.course.id).then(function (response) {
+                     $scope.courseList.push(response.course);
+                     $scope.selectedCourseId = response.course._id;
+                 });
+             });
          }
 
          $scope.toggleSelection = function toggleSelection(player) {
-             var idx = $scope.selectedPlayers.indexOf(player.id);
+             var idx = $scope.selectedPlayers.indexOf(player._id);
              if (idx > -1) {
                  $scope.selectedPlayers.splice(idx, 1);
              } else {
-                 $scope.selectedPlayers.push(player.id);
+                 $scope.selectedPlayers.push(player._id);
              }
          };
 
-         $scope.toOptionDisplay = function (course) {
-             return course.name + ' (' + course.holeCount + ' holes)';
-         };
-
          $scope.onStartGame = function () {
-             var game = GameFactory.create($scope.selectedCourseId, $scope.selectedPlayers);
-
-             $location.path('games/' + game.id + '/1');
+             GameFactory.create($scope.selectedCourseId, $scope.selectedPlayers).then(function(response) {
+                 $location.path('games/' + response.game.id + '/1');
+             });
          };
      }]);
 
@@ -188,6 +200,16 @@ discGolfControllers.controller(
                  console.error(err);
              });
              
+             CourseFactory.getList(false).then(function (response) {
+                 console.log(response);
+                 var list = response.courses;
+                 for (var i = 0; i < list.length; i++) {
+                     CourseFactory.delete(list[i]._id).then(function (response) { console.log(response); });
+                 }
+             }).catch( function (err) {
+                 console.error(err);
+             });
+
          }
      }]);
 
