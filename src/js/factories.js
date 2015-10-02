@@ -101,6 +101,21 @@ discGolfFactories.factory(
 
              return $q.when(service.db.bulkDocs(objects));
          }
+         
+         service.updateObject = function (object) {
+             var deferred = $q.defer();
+             
+             service.db.put(object).then( function (response) {
+                 object._id = response.id;
+                 object._rev = response.rev;
+                 
+                 deferred.resolve(object);
+             }).catch( function (err) {
+                 deferred.reject(err);
+             });
+             
+             return deferred.promise;
+         }
 
          service.createUniqueId = function () {
              return 'xxxx-xxxx-xxxx-xxxx'.replace(/x/g, function (c) {
@@ -165,7 +180,7 @@ discGolfFactories.factory(
          }
 
          service.update = function (player) {
-             return $q.when(PouchDBFactory.db.put(player));
+             return PouchDBFactory.updateObject(player);
          }
 
          service.delete = function (id) {
@@ -312,11 +327,11 @@ discGolfFactories.factory(
          }
 
          service.update = function (course) {
-             return $q.when(PouchDBFactory.db.put(course));
+             return PouchDBFactory.updateObject(course);
          }
 
          service.updateHole = function (hole) {
-             return $q.when(PouchDBFactory.db.put(hole));
+             return PouchDBFactory.updateObject(hole);
          }
 
          service.delete = function (id) {
@@ -528,7 +543,7 @@ discGolfFactories.factory(
                  game_id: gameId,
                  hole_id: holeId,
                  player_id: playerId,
-                 score: score
+                 value: score
              };
              
              var deferred = $q.defer();
@@ -546,11 +561,11 @@ discGolfFactories.factory(
          }
 
          service.update = function (game) {
-             return $q.when(PouchDBFactory.db.put(game));
+             return PouchDBFactory.updateObject(game);
          }
 
          service.updateScore = function (score) {
-             return $q.when(PouchDBFactory.db.put(score));
+             return PouchDBFactory.updateObject(score);
          }
 
          service.delete = function (id) {

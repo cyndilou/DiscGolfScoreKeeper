@@ -41,7 +41,7 @@
                 <div style="width: 100%;overflow: auto;">
                     <div class="btn-group" data-toggle="buttons">
                         <label class="btn btn-default" 
-                               ng-class="{'btn-active btn-success active' : dataObject.currentHoleScore.score == value}"
+                               ng-class="{'btn-active btn-success active' : dataObject.currentHoleScore == value}"
                                ng-repeat="value in scoreOptions" 
                                ng-click="setPlayerScore(dataObject, value)" 
                                resize-parent>
@@ -56,7 +56,7 @@
     <div class="page-footer">
         <button class="btn btn-success btn-lg pull-right pager-btn" 
                 ng-click="nextHole()" 
-                ng-hide="holeNumber == Object.keys(holes).length"
+                ng-hide="holeNumber == holeCount"
                 ng-disabled="!isHoleComplete()">
             Next&nbsp;
             <span class="fa fa-chevron-right"></span>
@@ -67,7 +67,7 @@
         </button>
         <button class="btn btn-success btn-lg pull-right pager-btn" 
                 ng-click="gameOver()" 
-                ng-show="holeNumber == Object.keys(holes).length"
+                ng-show="holeNumber == holeCount"
                 ng-disabled="!isHoleComplete()">
             Done!
         </button>

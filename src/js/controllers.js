@@ -126,14 +126,17 @@ discGolfControllers.controller(
     ['$scope', '$routeParams','$http', '$location', 'PlayerFactory', 'CourseFactory', 'GameFactory',
      function ($scope, $routeParams, $http, $location, PlayerFactory, CourseFactory, GameFactory) {
 
+         // Route parameters
          $scope.gameId = $routeParams.gameId;
          $scope.holeNumber = Number($routeParams.basket);
 
+         // Get the game info based on the route parameters
          GameFactory.get($scope.gameId).then(function (response) {
              $scope.game = response.game;
              $scope.scores = response.scores;
              $scope.players = response.players;
 
+             // Organize the data into an object that makes sense for the basket data
              var basketDataMap = {};
              for (playerIndex in response.players) {
                  var player = response.players[playerIndex];
@@ -141,6 +144,7 @@ discGolfControllers.controller(
                  basketDataMap[player._id].player = player;
              }
 
+             // Add the score info to the basket data
              for (scoreIndex in response.scores) {
                  var score = response.scores[scoreIndex];
 
@@ -148,29 +152,35 @@ discGolfControllers.controller(
                  basketDataMap[score.player_id].scores[score.hole_id] = score;
              }
 
+             // Turn it into an array so that it can be easily sorted
              $scope.basketData = Object.keys(basketDataMap).map(function (key) { return basketDataMap[key]; });
 
+             // Now get the course info
              return CourseFactory.get($scope.game.course_id);
          }).then( function (response) {
              $scope.course = response.course;
+             $scope.holeCount = response.holes.length;
 
-             $scope.holes = {};
+             // Get the current and last hole
              for (holeIndex in response.holes) {
                  var hole = response.holes[holeIndex];
-                 $scope.holes[hole.holeNumber] = hole;
+                 if (hole.holeNumber == $scope.holeNumber) {
+                     $scope.currentHole = hole;
+                 }
+
+                 if (hole.holeNumber == ($scope.holeNumber - 1)) {
+                     $scope.lastHole = hole;
+                 }
              }
 
-             $scope.currentHole = $scope.holes[$scope.holeNumber];
-             $scope.lastHole = $scope.holes[$scope.holeNumber - 1];
-
+             // Calculate some stats for each player
              for (dataIndex in $scope.basketData) {
                  var dataObject = $scope.basketData[dataIndex];
-
                  $scope.calculatePlayerScoreData(dataObject);
              }
 
+             // Determine the max score for this hole
              var highScore = $scope.currentHole.par !== undefined ? $scope.currentHole.par * 5 : 15;
-
              $scope.scoreOptions = [];
              for (var i = 1; i <= highScore; i++) {
                  $scope.scoreOptions.push(i);
@@ -182,33 +192,39 @@ discGolfControllers.controller(
 
              basketDataObject.currentHoleScore = -1;
              if (basketDataObject.scores[$scope.currentHole._id] !== undefined) {
-                 basketDataObject.currentHoleScore = basketDataObject.scores[$scope.currentHole._id];
+                 basketDataObject.currentHoleScore = basketDataObject.scores[$scope.currentHole._id].value;
              }
 
              basketDataObject.lastHoleScore = -1;
              if ($scope.lastHole !== undefined && basketDataObject.scores[$scope.lastHole._id] !== undefined) {
-                 basketDataObject.lastHoleScore = basketDataObject.scores[$scope.lastHole._id];
+                 basketDataObject.lastHoleScore = basketDataObject.scores[$scope.lastHole._id].value;
              }
 
              basketDataObject.totalScore = 0;
              for (index in basketDataObject.scores) {
-                 basketDataObject.totalScore += basketDataObject.scores[index].score;
+                 basketDataObject.totalScore += basketDataObject.scores[index].value;
              }
          }
 
          $scope.updateHole = function () {
-             CourseFactory.updateHole($scope.currentHole);
+             CourseFactory.updateHole($scope.currentHole).then( function (response) {
+                 console.log(response);
+             }).catch( function (err) {
+                 console.error(err);
+             });
          }
 
          $scope.setPlayerScore = function (dataObject, value) {
              var score = dataObject.scores[$scope.currentHole._id];
              if (score !== undefined) {
-                 score.score = value;
-                 GameFactory.updateScore(score);
+                 score.value = value;
+                 GameFactory.updateScore(score).then(function (response) {
+                     $scope.calculatePlayerScoreData(dataObject);
+                 });
              }
              else {
                  if (dataObject.scores === undefined) { dataObject.scores = {}; }
-                 
+
                  GameFactory.createScore($scope.game._id, $scope.currentHole._id, dataObject.player._id, value).then(function (response) {
                      dataObject.scores[$scope.currentHole._id] = response.score;
                      $scope.calculatePlayerScoreData(dataObject);
@@ -217,14 +233,19 @@ discGolfControllers.controller(
          }
 
          $scope.gameOver = function () {
-             $location.path('games/' + $scope.game._id);
+             $scope.game.gameOver = true;
+             GameFactory.update($scope.game).then( function (response) {
+                $location.path('games/' + $scope.game._id);
+             }).catch( function (err) {
+                 console.error(err);
+             });
          }
 
          $scope.isHoleComplete = function () {
              if ($scope.basketData === undefined) {
                  return false;
              }
-             
+
              for (var i = 0; i < $scope.basketData.length; i++) {
                  if ($scope.basketData[i].currentHoleScore == -1) {
                      return false;
@@ -235,7 +256,12 @@ discGolfControllers.controller(
          }
 
          $scope.nextHole = function () {
-             $location.path('games/' + $scope.game._id + '/' + ($scope.holeNumber+1));
+             $scope.game.lastHolePlayed = $scope.holeNumber+1;
+             GameFactory.update($scope.game).then( function (response) {
+                $location.path('games/' + $scope.game._id + '/' + ($scope.holeNumber+1));    
+             }).catch( function (err) {
+                 console.error(err);
+             });
          }
 
          $scope.previousHole = function () {
