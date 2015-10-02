@@ -57,6 +57,7 @@ discGolfFactories.factory(
                  result[listName] = response.docs;
                  deferred.resolve(result);
              }).catch ( function (err) {
+                 console.error(err);
                  deferred.reject(err);
              });
 
@@ -79,6 +80,7 @@ discGolfFactories.factory(
              }).then(function (response) {
                  deferred.resolve(response);
              }).catch(function (err) {
+                 console.error(err);
                  deferred.reject(err);
              });
 
@@ -144,6 +146,7 @@ discGolfFactories.factory(
                  result.player = object;
                  deferred.resolve(result);
              }).catch( function (err) {
+                 console.error(err);
                  deferred.reject(err);
              });
 
@@ -180,6 +183,7 @@ discGolfFactories.factory(
              }).then ( function (response) {
                  deferred.resolve(response);
              }).catch( function (err) {
+                 console.error(err);
                  deferred.reject(err);
              });
 
@@ -242,6 +246,7 @@ discGolfFactories.factory(
                  result.holes = response;
                  deferred.resolve(result);
              }).catch(function (err) {
+                 console.error(err);
                  deferred.reject(err);
              });
 
@@ -264,6 +269,7 @@ discGolfFactories.factory(
 
                  deferred.resolve(holes);
              }).catch(function (err) {
+                 console.error(err);
                  deferred.reject(err);
              })
 
@@ -298,6 +304,7 @@ discGolfFactories.factory(
                  result.holes = response;   
                  deferred.resolve(result);
              }).catch(function (err) {
+                 console.error(err);
                  deferred.reject(err);
              });
 
@@ -343,6 +350,7 @@ discGolfFactories.factory(
 
                  deferred.resolve(result);
              }).catch (function (err) {
+                 console.error(err);
                  deferred.reject(err);
              });
 
@@ -378,7 +386,7 @@ discGolfFactories.factory(
 
          service.createIndexes = function () {
              return $q.when(PouchDBFactory.db.createIndex({
-                 index: { fields: [ 'type', 'game_id' ] }
+                 index: { fields: [ 'type', 'game_id', 'hole_id', 'player_id' ] }
              }));
          }
 
@@ -404,62 +412,74 @@ discGolfFactories.factory(
                      selector: { type: PouchDBFactory.types.gamePlayer, game_id: result.game._id }
                  });
              }).then ( function (response) {
-                 var players = response.docs;
+                 var gamePlayers = response.docs;
 
-                 result.playerIds = [];
-                 for (index in players) {
-                     result.playerIds.push(players[index].player_id);
+                 var players = [];
+                 for (index in gamePlayers) {
+                     players.push(PouchDBFactory.db.get(gamePlayers[index].player_id));
                  }
 
-                 return service.getScores(result.game._id);
+                 return $q.all(players);
+             }).then( function (response) {
+                 result.players = response;
+                 
+                 return PouchDBFactory.db.find({
+                     selector: {
+                         type: PouchDBFactory.types.score,
+                         game_id: result.game._id
+                     }
+                 });
+
+                 //return service.getScores(result.game._id);
              }).then ( function (response) {
-                 result.scores = response;
+                 result.scores = response.docs;
 
                  deferred.resolve(result);
              }).catch (function (err) {
+                 console.error(err);
                  deferred.reject(err);
              });
 
              return deferred.promise;
          }
 
-         service.getScores = function (gameId, holeId) {
-             var deferred = $q.defer();
-
-             var selector = {
-                 type: PouchDBFactory.types.score,
-                 game_id: gameId
-             };
-
-             if (holeId !== undefined) {
-                 selector.hole_id = holeId;
-             }
-
-             var result = {};
-             var totals = {};
-             PouchDBFactory.db.find({
-                 selector: selector
-             }).then( function (response) {
-                 var scores = response.docs;
-                 for (var i = 0; i < scores.length; i++) {
-                     var score = scores[i];
-
-                     if (result[score.hole_id] === undefined) { result[score.hole_id] = []; }
-                     result[score.hole_id].push(score);
-
-                     if (totals[score.player_id] === undefined) { totals[score.player_id] = { player_id: score.player_id, totalScore: 0 }; }
-                     totals[score.player_id].totalScore += score.score;
-                 }
-
-                 result.totals = Object.keys(totals).map(function (key) { return totals[key] });
-
-                 deferred.resolve(result);
-             }).catch( function (err) {
-                 deferred.reject(err);
-             });
-
-             return deferred.promise;
-         }
+//         service.getScores = function (gameId, holeId) {
+//             var deferred = $q.defer();
+//
+//             var selector = {
+//                 type: PouchDBFactory.types.score,
+//                 game_id: gameId
+//             };
+//
+//             if (holeId !== undefined) {
+//                 selector.hole_id = holeId;
+//             }
+//
+//             var result = {};
+//             var totals = {};
+//             PouchDBFactory.db.find({
+//                 selector: selector
+//             }).then( function (response) {
+//                 var scores = response.docs;
+//                 for (var i = 0; i < scores.length; i++) {
+//                     var score = scores[i];
+//
+//                     if (result[score.hole_id] === undefined) { result[score.hole_id] = []; }
+//                     result[score.hole_id].push(score);
+//
+//                     if (totals[score.player_id] === undefined) { totals[score.player_id] = { player_id: score.player_id, totalScore: 0 }; }
+//                     totals[score.player_id].totalScore += score.score;
+//                 }
+//
+//                 result.totals = Object.keys(totals).map(function (key) { return totals[key] });
+//
+//                 deferred.resolve(result);
+//             }).catch( function (err) {
+//                 deferred.reject(err);
+//             });
+//
+//             return deferred.promise;
+//         }
 
          service.create = function (courseId, playerIds) {
              var deferred = $q.defer();
@@ -494,6 +514,7 @@ discGolfFactories.factory(
                  result.gamePlayers = response;
                  deferred.resolve(result);
              }).catch(function (err) {
+                 console.error(err);
                  deferred.reject(err);
              });
 
@@ -509,8 +530,19 @@ discGolfFactories.factory(
                  player_id: playerId,
                  score: score
              };
-
-             return $q.when(PouchDBFactory.db.put(score));
+             
+             var deferred = $q.defer();
+             PouchDBFactory.db.put(score).then(function (response) {
+                 return PouchDBFactory.db.get(response.id);
+             }).then( function (response) {
+                 var result = { score: response};
+                 deferred.resolve(result);
+             }).catch( function (err) {
+                 console.error(err);
+                 deferred.reject(err);
+             });
+             
+             return deferred.promise;
          }
 
          service.update = function (game) {
@@ -547,6 +579,7 @@ discGolfFactories.factory(
                  result.game = response;
                  deferred.resolve(result);
              }).catch ( function (err) {
+                 console.error(err);
                  deferred.reject(err);
              })
 
