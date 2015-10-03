@@ -300,118 +300,137 @@ discGolfControllers.controller(
 
 discGolfControllers.controller(
     'GameController', 
-    ['$scope', '$routeParams','$http', '$location', 'PlayerFactory', 'CourseFactory', 'GameFactory',
-     function ($scope, $routeParams, $http, $location, PlayerFactory, CourseFactory, GameFactory) {
+    ['$scope', '$routeParams','$http', '$location', '$q', 'PlayerFactory', 'CourseFactory', 'GameFactory',
+     function ($scope, $routeParams, $http, $location, $q, PlayerFactory, CourseFactory, GameFactory) {
+
+         $scope.games = {};
+         $scope.courses = {};
+         
+         $scope.loadGame = function (gameId) {
+             if ($scope.games[gameId] === undefined) {
+                 GameFactory.get(gameId).then( function (response) {
+                     $scope.games[gameId] = {
+                         game: response.game,
+                         playerScores: $scope.resolvePlayerScores(response.players, response.scores)
+                     }
+
+                     $scope.loadCourses([response.game.course_id]);
+                 }).catch( function (err) {
+                     console.error(err);
+                 });
+             }
+         }
 
          $scope.gameId = $routeParams.gameId;
          if ($scope.gameId !== undefined) {
-             $scope.game = GameFactory.get($scope.gameId);
-             $scope.course = CourseFactory.get($scope.game.courseId);
+             $scope.loadGame($scope.gameId);
+         }
+         else {
+             GameFactory.getList().then( function (response) {
+                 $scope.gameList = response.games;
+
+                 var courses = [];
+                 for (var i = 0; i < response.games.length; i++) {
+                     if (courses.indexOf(response.games[i].course_id) == -1) {
+                         courses.push(response.games[i].course_id);
+                     }
+                 }
+
+                 $scope.loadCourses(courses);
+             }).catch( function (err) {
+                 console.error(err);
+             });
          }
 
-         $scope.gameList = GameFactory.getList();
-         $scope.playerList = {};
+         $scope.resolvePlayerScores = function (players, scores) {
+             var playerScores = {};
+             for (var i = 0; i < players.length; i++) {
+                 playerScores[players[i]._id] = { player: players[i], scoresByHole: {}, totalScore: 0 };
+             }
 
-         $scope.getCourse = function (courseId) {
-             return CourseFactory.get(courseId);
+             for (var i = 0; i < scores.length; i++) {
+                 var score = scores[i];
+                 playerScores[score.player_id].scoresByHole[score.hole_id] = score;
+                 playerScores[score.player_id].totalScore += score.value;
+             }
+
+             return Object.keys(playerScores).map(function (key) { return playerScores[key]; });
          }
 
-         $scope.getHoleList = function (courseId) {
-             var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
-
-             var holeList = [];
-             for (var i = 1; i <= course.holeCount; i++) {
-                 holeList.push(i);
-             }
-
-             return holeList;
-         }
-
-         $scope.getPlayerList = function (gameId) {
-             if (gameId === undefined) {
-                 gameId = $scope.game.id;
-             }
-
-             if ($scope.playerList[gameId] !== undefined) {
-                 return $scope.playerList[gameId];
-             }
-
-             var game = GameFactory.get(gameId);
-             var course = CourseFactory.get(game.courseId);
-
-             var playerList = [];
-             for (index in game.playerIds) {
-                 var playerId = game.playerIds[index];
-
-                 var player = PlayerFactory.get(playerId);
-                 if (player !== undefined) {
-                     var total = game.getPlayerTotalScore(playerId);
-
-                     playerList.push({id: player.id, name: player.name, totalScore: total});
+         $scope.loadCourses = function (courseIds) {
+             var coursesToLoad = [];
+             for (var i = 0; i < courseIds.length; i++) {
+                 if ($scope.courses[courseIds[i]] === undefined) {
+                     coursesToLoad.push(CourseFactory.get(courseIds[i]));
                  }
              }
 
-             playerList.sort(function (player1, player2) { return player1.totalScore > player2.totalScore; });
-
-             $scope.playerList[gameId] = playerList;
-
-             return playerList;
-         }
-
-         $scope.getPlayerScore = function (gameId, playerId, hole) {
-             var game = GameFactory.get(gameId);
-             if (game.holeScores[hole] !== undefined) {
-                 return game.holeScores[hole][playerId];
-             }
+             $q.all(coursesToLoad).then( function (response) {
+                 for (var i = 0; i < response.length; i++) {
+                     $scope.courses[response[i].course._id] = {
+                         course: response[i].course,
+                         holes: response[i].holes
+                     };
+                 }
+             }).catch( function (err) {
+                 console.error(err);
+             });
          }
 
          $scope.getTotalPar = function (courseId) {
-             var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
+             var course = $scope.courses[courseId];
+             if (course !== undefined) {
+                 var totalPar = 0;
+                 for (var i = 0; i < course.holes.length; i++) {
+                     totalPar += Number(course.holes[i].par || 0);
+                 }
 
-             var totalPar = 0;
-             for (hole in course.holes) {
-                 totalPar += Number(course.holes[hole].par);
+                 return totalPar;
              }
-
-             return totalPar;
          }
 
          $scope.getTotalDistance = function (courseId) {
-             var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
+             var course = $scope.courses[courseId];
+             if (course !== undefined) {
+                 var totalDistance = 0;
+                 for (var i = 0; i < course.holes.length; i++) {
+                     totalDistance += Number(course.holes[i].distance || 0);
+                 }
 
-             var totalDistance = 0;
-             for (hole in $scope.course.holes) {
-                 totalDistance += Number($scope.course.holes[hole].distance);
+                 return totalDistance;
              }
-
-             return totalDistance;
          }
 
-         $scope.getHolePar = function (courseId, hole) {
-             var course = CourseFactory.get(courseId);
-
-             if (course.holes[hole] !== undefined) {
-                 return course.holes[hole].par;
-             }
+         $scope.deleteGame = function (game) {
+             GameFactory.delete(game._id).then( function (response) {
+                 console.log(response);
+                 
+                 var index = $scope.gameList.indexOf(game);
+                 if (index != -1) {
+                     $scope.gameList.splice(index, 1);
+                 }
+             }).catch( function (err) {
+                 console.error(err);
+             });
          }
 
          $scope.isGameOver = function (gameId) {
-             var game = gameId !== undefined ? GameFactory.get(gameId) : $scope.game;
-             var course = gameId !== undefined ? CourseFactory.get(game.courseId) : $scope.course;
-
-             var lastHolePlayed = game.getLastHolePlayed();
-             return lastHolePlayed == course.holeCount;
+             if ($scope.games[gameId] === undefined) {
+                 return false;
+             }
+             
+             var isGameOver = $scope.games[gameId].game.gameOver === true;
+             return $scope.games[gameId].game.gameOver === true;
          }
-
-         $scope.deleteGame = function (gameId) {
-             GameFactory.delete(gameId);
-         }
-
+         
          $scope.resumeGame = function (gameId) {
-             var game = gameId !== undefined ? GameFactory.get(gameId) : $scope.game;
-
-             var hole = game.getLastHolePlayed();
-             $location.path('games/' + game.id + '/' + hole);
+             if (gameId === undefined) {
+                 gameId = $scope.gameId;
+             }
+             
+             var lastHolePlayed = $scope.games[gameId].game.lastHolePlayed || 1;
+             
+             $location.path('games/' + $scope.games[gameId].game._id + '/' + lastHolePlayed);
          }
      }]);
 

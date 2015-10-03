@@ -7,9 +7,9 @@
             <!-- todo: order the list by game date.  See http://justinklemm.com/angularjs-filter-ordering-objects-ngrepeat/ -->
             <div class="list-group-item" ng-repeat="game in gameList" expand-collapse-icon>
 
-                <button class="transparentButton" type="button" data-toggle="collapse" data-target="#collapseExample-{{$index}}" aria-expanded="false">
+                <button class="transparentButton" type="button" data-toggle="collapse" data-target="#collapseExample-{{$index}}" aria-expanded="false" ng-click="loadGame(game._id)">
                     <span class="fa"></span>
-                    {{getCourse(game.courseId).name}} <small>{{game.date | date:'short'}}</small>
+                    {{courses[game.course_id].course.name}} <small>{{game.date | date:'short'}}</small>
                 </button>
 
                 <div class="collapse" id="collapseExample-{{$index}}" style="margin-top:10px">
@@ -19,30 +19,36 @@
                                 <tr>
                                     <th class="tableInfoCell"></th>
                                     <th class="tableInfoCell" style="max-width:50px">Total</th>
-                                    <th class="tableInfoCell" ng-repeat="hole in getHoleList(game.courseId)">{{hole}}</th>
+                                    <th class="tableInfoCell" ng-repeat="hole in courses[game.course_id].holes">
+                                        {{hole.holeNumber}}
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td class="tableInfoCell">Par</td>
-                                    <td class="tableInfoCell">{{getTotalPar(game.courseId)}}</td>
-                                    <td class="tableInfoCell" ng-repeat="hole in getHoleList(game.courseId)">{{getHolePar(game.courseId, hole)}}</td>
+                                    <td class="tableInfoCell">{{getTotalPar(game.course_id)}}</td>
+                                    <td class="tableInfoCell" ng-repeat="hole in courses[game.course_id].holes">
+                                        {{hole.par}}
+                                    </td>
                                 </tr>
-                                <tr ng-repeat="player in getPlayerList(game.id)">
-                                    <td>{{player.name}}</td>
-                                    <td>{{player.totalScore}}</td>
-                                    <td ng-repeat="hole in getHoleList(game.courseId)">{{getPlayerScore(game.id, player.id, hole)}}</td>
+                                <tr ng-repeat="gamePlayer in games[game._id].playerScores | orderBy:'totalScore'">
+                                    <td>{{gamePlayer.player.name}}</td>
+                                    <td>{{gamePlayer.totalScore}}</td>
+                                    <td ng-repeat="hole in courses[game.course_id].holes">
+                                        {{gamePlayer.scoresByHole[hole._id].value}}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <button class="btn btn-danger btn-block" ng-click="deleteGame(game.id)">
+                    <button class="btn btn-danger btn-block" ng-click="deleteGame(game)">
                         <span class="fa fa-trash"></span>
                         Delete
                     </button>
 
-                    <button class="btn btn-success btn-block" ng-hide="isGameOver(game.id)" ng-click="resumeGame(game.id)">
+                    <button class="btn btn-success btn-block"  ng-hide="isGameOver(game._id)" ng-click="resumeGame(game._id)">
                         <span class="fa fa-play"></span>
                         Resume
                     </button>

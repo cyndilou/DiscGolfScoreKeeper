@@ -1,6 +1,6 @@
 <div>
     <div class="page-header">
-        <h4>{{course.name}} <small>{{game.date | date:'short'}}</small></h4>
+        <h4>{{courses[games[gameId].game.course_id].course.name}} <small>{{games[gameId].game.date | date:'short'}}</small></h4>
     </div>
     
     <div class="page-body" page-body>
@@ -11,29 +11,31 @@
                         <th class="tableInfoCell"><small>Hole</small></th>
                         <th class="tableInfoCell"><small>Feet</small></th>
                         <th class="tableInfoCell"><small>Par</small></th>
-                        <th class="tableInfoCell" ng-repeat="player in getPlayerList()">{{player.name}}</th>
+                        <th class="tableInfoCell" ng-repeat="gamePlayer in games[gameId].playerScores | orderBy:'totalScore'">{{gamePlayer.player.name}}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="hole in getHoleList()">
-                        <td class="tableInfoCell"><small>{{hole}}</small></td>
-                        <td class="tableInfoCell"><small>{{course.holes[hole].distance}}</small></td>
-                        <td class="tableInfoCell"><small>{{course.holes[hole].par}}</small></td>
-                        <td ng-repeat="player in getPlayerList()">{{game.holeScores[hole][player.id]}}</td>
+                    <tr ng-repeat="hole in courses[games[gameId].game.course_id].holes">
+                        <td class="tableInfoCell"><small>{{hole.holeNumber}}</small></td>
+                        <td class="tableInfoCell"><small>{{hole.distance}}</small></td>
+                        <td class="tableInfoCell"><small>{{hole.par}}</small></td>
+                        <td ng-repeat="gamePlayer in games[gameId].playerScores | orderBy:'totalScore'">
+                            {{gamePlayer.scoresByHole[hole._id].value}}
+                        </td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <td class="tableInfoCell"><small>Total</small></td>
-                    <td class="tableInfoCell"><small>{{getTotalDistance()}}</small></td>
-                    <td class="tableInfoCell"><small>{{getTotalPar()}}</small></td>
-                    <td ng-repeat="player in getPlayerList()">{{player.totalScore}}</td>
+                    <td class="tableInfoCell"><small>{{getTotalDistance(games[gameId].game.course_id)}}</small></td>
+                    <td class="tableInfoCell"><small>{{getTotalPar(games[gameId].game.course_id)}}</small></td>
+                    <td ng-repeat="gamePlayer in games[gameId].playerScores | orderBy:'totalScore'">{{gamePlayer.totalScore}}</td>
                 </tfoot>
             </table>
         </div>
     </div>
     
     <div class="page-footer">
-        <button class="btn btn-block btn-lg btn-success" onClick="location.href='#/new-game'" ng-show="isGameOver()">Play Again</button>
-        <button class="btn btn-block btn-lg btn-success" ng-click="resumeGame()" ng-hide="isGameOver()" style="display:none">Resume</button>
+        <button class="btn btn-block btn-lg btn-success" onClick="location.href='#/new-game'" ng-show="isGameOver(gameId)">Play Again</button>
+        <button class="btn btn-block btn-lg btn-success" ng-click="resumeGame()" ng-class="{'hidden':isGameOver(gameId)}">Resume</button>
     </div>
 </div>
