@@ -4,15 +4,14 @@
     </div>
     <div class="page-body" page-body>
         <div class="list-group">
-            <!-- todo: order the list by course name.  See http://justinklemm.com/angularjs-filter-ordering-objects-ngrepeat/ -->
-            <div class="list-group-item" ng-repeat="course in courseList" expand-collapse-icon>
+            <div class="list-group-item" ng-repeat="course in courseList | orderBy:'name'" expand-collapse-icon>
 
-                <button class="transparentButton" type="button" data-toggle="collapse" data-target="#collapseExample-{{$index}}" aria-expanded="false">
+                <button class="transparentButton" type="button" data-toggle="collapse" data-target="#collapseExample-{{$index}}" aria-expanded="false" ng-click="loadCourse(course._id)">
                     <span class="fa"></span>
                     {{course.name}}
                 </button>
 
-                <button class="transparentButton pull-right" ng-click="editCourse(course.id)">
+                <button class="transparentButton pull-right" ng-click="editCourse(course._id)">
                     <span class="fa fa-pencil"></span>
                 </button>
 
@@ -22,23 +21,23 @@
                             <thead>
                                 <tr>
                                     <th class="tableInfoCell">Hole</th>
-                                    <th class="tableInfoCell" ng-repeat="hole in getHoleList(course.id)">{{hole}}</th>
+                                    <th class="tableInfoCell" ng-repeat="hole in courses[course._id].holes">{{hole.holeNumber}}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td class="tableInfoCell">Par</td>
-                                    <td ng-repeat="hole in getHoleList(course.id)">{{getHolePar(course.id, hole)}}</td>
+                                    <td ng-repeat="hole in courses[course._id].holes">{{hole.par}}</td>
                                 </tr>
                                 <tr>
                                     <td class="tableInfoCell">Feet</td>
-                                    <td ng-repeat="hole in getHoleList(course.id)">{{getHoleDistance(course.id, hole)}}</td>
+                                    <td ng-repeat="hole in courses[course._id].holes">{{hole.distance}}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <button class="btn btn-danger btn-block" ng-click="deleteCourse(course.id)">
+                    <button class="btn btn-danger btn-block" ng-click="deleteCourse(course)">
                         <span class="fa fa-trash"></span>
                         Delete
                     </button>

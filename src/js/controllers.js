@@ -235,7 +235,7 @@ discGolfControllers.controller(
          $scope.gameOver = function () {
              $scope.game.gameOver = true;
              GameFactory.update($scope.game).then( function (response) {
-                $location.path('games/' + $scope.game._id);
+                 $location.path('games/' + $scope.game._id);
              }).catch( function (err) {
                  console.error(err);
              });
@@ -258,7 +258,7 @@ discGolfControllers.controller(
          $scope.nextHole = function () {
              $scope.game.lastHolePlayed = $scope.holeNumber+1;
              GameFactory.update($scope.game).then( function (response) {
-                $location.path('games/' + $scope.game._id + '/' + ($scope.holeNumber+1));    
+                 $location.path('games/' + $scope.game._id + '/' + ($scope.holeNumber+1));    
              }).catch( function (err) {
                  console.error(err);
              });
@@ -271,30 +271,52 @@ discGolfControllers.controller(
 
 discGolfControllers.controller(
     'SettingsController', 
-    ['$scope', 'PlayerFactory', 'CourseFactory', 'GameFactory',
-     function ($scope, PlayerFactory, CourseFactory, GameFactory) {
+    ['$scope', '$q', 'PlayerFactory', 'CourseFactory', 'GameFactory',
+     function ($scope, $q, PlayerFactory, CourseFactory, GameFactory) {
 
          $scope.clearLocalData = function () {
-             PlayerFactory.getList(false).then(function (response) {
+
+             var gameList = [];
+             var courseList = [];
+             var playerList = [];
+             
+             $q.all([
+                 GameFactory.getList(false),
+                 CourseFactory.getList(false),
+                 PlayerFactory.getList(false)
+             ]).then( function (response) {
                  console.log(response);
-                 var list = response.players;
-                 for (var i = 0; i < list.length; i++) {
-                     PlayerFactory.delete(list[i]._id).then(function (response) { console.log(response); });
+                 
+                 gameList = response[0].games;
+                 courseList = response[1].courses;
+                 playerList = response[2].players;
+                 
+                 // delete the games first
+                 var deletePromises = [];
+                 for (var i = 0; i < gameList.length; i++) {
+                     deletePromises.push(GameFactory.delete(gameList[i]._id));
                  }
+                 
+                 return $q.all(deletePromises);
+             }).then( function (response) {
+                 console.log(response);
+                 
+                 // now we can delete all the courses and players
+                 var deletePromises = [];
+                 for (var i = 0; i < courseList.length; i++) {
+                     deletePromises.push(CourseFactory.delete(courseList[i]._id));
+                 }
+                 
+                 for (var i = 0; i < playerList.length; i++) {
+                     deletePromises.push(PlayerFactory.delete(playerList[i]._id));
+                 }
+                 
+                 return $q.all(deletePromises);
+             }).then( function (response) {
+                 console.log(response);
              }).catch( function (err) {
                  console.error(err);
              });
-
-             CourseFactory.getList(false).then(function (response) {
-                 console.log(response);
-                 var list = response.courses;
-                 for (var i = 0; i < list.length; i++) {
-                     CourseFactory.delete(list[i]._id).then(function (response) { console.log(response); });
-                 }
-             }).catch( function (err) {
-                 console.error(err);
-             });
-
          }
      }]);
 
@@ -305,7 +327,7 @@ discGolfControllers.controller(
 
          $scope.games = {};
          $scope.courses = {};
-         
+
          $scope.loadGame = function (gameId) {
              if ($scope.games[gameId] === undefined) {
                  GameFactory.get(gameId).then( function (response) {
@@ -404,7 +426,7 @@ discGolfControllers.controller(
          $scope.deleteGame = function (game) {
              GameFactory.delete(game._id).then( function (response) {
                  console.log(response);
-                 
+
                  var index = $scope.gameList.indexOf(game);
                  if (index != -1) {
                      $scope.gameList.splice(index, 1);
@@ -418,78 +440,134 @@ discGolfControllers.controller(
              if ($scope.games[gameId] === undefined) {
                  return false;
              }
-             
+
              var isGameOver = $scope.games[gameId].game.gameOver === true;
              return $scope.games[gameId].game.gameOver === true;
          }
-         
+
          $scope.resumeGame = function (gameId) {
              if (gameId === undefined) {
                  gameId = $scope.gameId;
              }
-             
+
              var lastHolePlayed = $scope.games[gameId].game.lastHolePlayed || 1;
-             
+
              $location.path('games/' + $scope.games[gameId].game._id + '/' + lastHolePlayed);
          }
      }]);
 
 discGolfControllers.controller(
     'CourseController', 
-    ['$scope', '$routeParams', '$location', 'CourseFactory',
-     function ($scope, $routeParams, $location, CourseFactory) {
+    ['$scope', '$routeParams', '$location', '$q', 'CourseFactory',
+     function ($scope, $routeParams, $location, $q, CourseFactory) {
 
          $scope.courseId = $routeParams.courseId;
-         if ($scope.courseId !== undefined) {
-             $scope.courseOriginal = CourseFactory.get($scope.courseId);
-             $scope.course = angular.copy($scope.courseOriginal);
+
+         $scope.courses = {};
+         $scope.loadCourse = function (courseId) {
+             if ($scope.courses[courseId] === undefined) {
+                 CourseFactory.get(courseId, $scope.courseId === undefined).then( function (response) {
+                     $scope.courses[courseId] = {
+                         course: response.course,
+                         holes: response.holes,
+                         holeCount: 0
+                     };
+
+                     for (var i = 0; i < response.holes.length; i++) {
+                         if (response.holes[i].isActive) {
+                             $scope.courses[courseId].holeCount++;
+                         }
+                     }
+                 }).catch( function (err) {
+                     console.error(err);
+                 });
+             }
          }
 
-         $scope.courseList = CourseFactory.getList();
+         if ($scope.courseId !== undefined) {
+             $scope.loadCourse($scope.courseId);
+         }
+         else {
+             CourseFactory.getList().then( function (response) {
+                 $scope.courseList = response.courses;
+             }).catch( function (err) {
+                 console.error(err);
+             });
+         }
 
          $scope.editCourse = function (courseId) {
              navigateToCourse(courseId);
          }
 
-         $scope.deleteCourse = function (courseId) {
-             CourseFactory.delete(courseId);
+         $scope.holeCountChanged = function (courseId) {
+             var holes = $scope.courses[courseId].holes;
+             var holeCount = $scope.courses[courseId].holeCount;
+
+             for (var i = 0; i < holes.length; i++) {
+                 var isActive = (i < holeCount) ? true : false;
+
+                 if (holes[i].isActive !== isActive) {
+                     holes[i].isActive = isActive;
+                     holes[i].dirty = true;
+                 }
+             }
+
+             var holesToAdd = holeCount - holes.length;
+             for (var i = 0; i < holesToAdd; i++) {
+                 holes.push({
+                     holeNumber: holes.length+1
+                 });
+             }
+         }
+
+         $scope.deleteCourse = function (course) {
+             CourseFactory.delete(course._id).then( function (response) {
+                 var index = $scope.courseList.indexOf(course);
+                 if (index != -1) {
+                     $scope.courseList.splice(index, 1);
+                 }
+             }).catch( function (err) {
+                 console.error(err);
+             });
          }
 
          $scope.addCourse = function () {
-             var course = CourseFactory.create();
-             navigateToCourse(course.id);
-         }
-
-         $scope.getHoleList = function (courseId) {
-             var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
-
-             var holeList = [];
-             for (var i = 1; i <= course.holeCount; i++) {
-                 holeList.push(i);
-             }
-
-             return holeList;
-         }
-
-         $scope.getHolePar = function (courseId, hole) {
-             var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
-
-             if (course.holes[hole] !== undefined) {
-                 return course.holes[hole].par;
-             }
-         }
-
-         $scope.getHoleDistance = function (courseId, hole) {
-             var course = courseId !== undefined ? CourseFactory.get(courseId) : $scope.course;
-
-             if (course.holes[hole] !== undefined) {
-                 return course.holes[hole].distance;
-             }
+             CourseFactory.create('', 9).then( function (response) {
+                 navigateToCourse(response.course.id);
+             }).catch( function (err) {
+                 console.error(err);
+             });
          }
 
          $scope.save = function () {
-             CourseFactory.update($scope.course);
-             navigateToCourse();
+             var data = $scope.courses[$scope.courseId];
+
+             var promises = [];
+             if (data.course.dirty) {
+                 delete data.course.dirty;
+
+                 promises.push(CourseFactory.update(data.course));
+             }
+
+             for (var i = 0; i < data.holes.length; i++) {
+                 var hole = data.holes[i];
+
+                 if (hole._id === undefined) {
+                     if (hole.isActive !== false) {
+                         promises.push(CourseFactory.addHole(data.course._id, hole.holeNumber, hole.par, hole.distance));
+                     }
+                 }
+                 else if (hole.dirty === true) {
+                     delete hole.dirty;
+                     promises.push(CourseFactory.updateHole(hole));
+                 }
+             }
+
+             $q.all(promises).then( function (response) {
+                 navigateToCourse();
+             }).catch( function (err) {
+                 console.error(err);
+             });
          }
 
          $scope.cancel = function () {

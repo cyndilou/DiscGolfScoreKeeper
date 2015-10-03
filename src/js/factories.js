@@ -101,19 +101,19 @@ discGolfFactories.factory(
 
              return $q.when(service.db.bulkDocs(objects));
          }
-         
+
          service.updateObject = function (object) {
              var deferred = $q.defer();
-             
+
              service.db.put(object).then( function (response) {
                  object._id = response.id;
                  object._rev = response.rev;
-                 
+
                  deferred.resolve(object);
              }).catch( function (err) {
                  deferred.reject(err);
              });
-             
+
              return deferred.promise;
          }
 
@@ -233,7 +233,7 @@ discGolfFactories.factory(
 
          service.createIndexes = function () {
              return $q.when(PouchDBFactory.db.createIndex({
-                 index: { fields: [ 'type', 'course_id' ] }
+                 index: { fields: [ 'type', 'course_id', 'isActive' ] }
              }));
          }
 
@@ -249,14 +249,14 @@ discGolfFactories.factory(
              return PouchDBFactory.getByType(PouchDBFactory.types.course, 'courses', activeOnly);
          }
 
-         service.get = function (id) {
+         service.get = function (id, activeHolesOnly) {
              var deferred = $q.defer();
 
              var result = {};
 
              PouchDBFactory.db.get(id).then( function (response) {
                  result.course = response;
-                 return service.getCourseHoles(result.course._id);
+                 return service.getCourseHoles(result.course._id, activeHolesOnly);
              }).then(function (response) {
                  result.holes = response;
                  deferred.resolve(result);
@@ -268,14 +268,22 @@ discGolfFactories.factory(
              return deferred.promise;
          }
 
-         service.getCourseHoles = function (course_id) {
+         service.getCourseHoles = function (course_id, activeHolesOnly) {
+             if (activeHolesOnly === undefined) { activeHolesOnly = true; }
+
              var deferred = $q.defer();
 
+             var selector = {
+                 type: PouchDBFactory.types.hole,
+                 course_id: course_id
+             };
+
+             if (activeHolesOnly == true) {
+                 selector.isActive = true;
+             }
+
              PouchDBFactory.db.find({
-                 selector: {
-                     type: PouchDBFactory.types.hole,
-                     course_id: course_id
-                 }
+                 selector: selector
              }).then(function (response) {
                  var holes = response.docs;
                  holes.sort(function (hole1, hole2) {
@@ -307,7 +315,9 @@ discGolfFactories.factory(
                      _id: PouchDBFactory.createUniqueId(), 
                      type: PouchDBFactory.types.hole, 
                      holeNumber: (i+1), 
-                     course_id: course._id });
+                     course_id: course._id,
+                     isActive: true
+                 });
              }
 
              var result = {};
@@ -319,6 +329,31 @@ discGolfFactories.factory(
                  result.holes = response;   
                  deferred.resolve(result);
              }).catch(function (err) {
+                 console.error(err);
+                 deferred.reject(err);
+             });
+
+             return deferred.promise;
+         }
+
+         service.addHole = function (courseId, holeNumber, par, distance) {
+             var hole = {
+                 _id: PouchDBFactory.createUniqueId(),
+                 type: PouchDBFactory.types.hole,
+                 holeNumber: holeNumber,
+                 course_id: courseId,
+                 par: par,
+                 distance: distance,
+                 isActive: true
+             };
+
+             var deferred = $q.defer();
+             PouchDBFactory.db.put(hole).then(function (response) {
+                 return PouchDBFactory.db.get(response.id);
+             }).then( function (response) {
+                 var result = { hole: response};
+                 deferred.resolve(result);
+             }).catch( function (err) {
                  console.error(err);
                  deferred.reject(err);
              });
@@ -352,16 +387,31 @@ discGolfFactories.factory(
 
                  // if there are games, then soft delete
                  softDelete = games.length > 0;
-                 return PouchDBFactory.deleteObject(id, softDelete);
-             }).then ( function (response) {
-                 result.course = response;
 
-                 // get the holes for the course
-                 return service.getCourseHoles(id);
-             }).then ( function (holes) {
-                 return PouchDBFactory.deleteObjects(holes, softDelete);
-             }).then (function (response) {
-                 result.holes = response;
+                 // get the holes
+                 return service.getCourseHoles(id, false);
+             }).then ( function (response) {
+                 var holes = response;
+
+                 var promises = [
+                     // delete the course
+                     PouchDBFactory.deleteObject(id, softDelete)
+                 ];
+
+                 // if we are not soft deleting, delete the holes
+                 if (!softDelete) {
+                     promises.push(PouchDBFactory.deleteObjects(holes, false));
+                 }
+
+                 return $q.all(promises);
+             }).then ( function (response) {
+                 var result =  {
+                     course: response[0]
+                 };
+                 
+                 if (response.length == 2) {
+                     result.holes = response[1];
+                 }
 
                  deferred.resolve(result);
              }).catch (function (err) {
@@ -437,7 +487,7 @@ discGolfFactories.factory(
                  return $q.all(players);
              }).then( function (response) {
                  result.players = response;
-                 
+
                  return PouchDBFactory.db.find({
                      selector: {
                          type: PouchDBFactory.types.score,
@@ -458,43 +508,43 @@ discGolfFactories.factory(
              return deferred.promise;
          }
 
-//         service.getScores = function (gameId, holeId) {
-//             var deferred = $q.defer();
-//
-//             var selector = {
-//                 type: PouchDBFactory.types.score,
-//                 game_id: gameId
-//             };
-//
-//             if (holeId !== undefined) {
-//                 selector.hole_id = holeId;
-//             }
-//
-//             var result = {};
-//             var totals = {};
-//             PouchDBFactory.db.find({
-//                 selector: selector
-//             }).then( function (response) {
-//                 var scores = response.docs;
-//                 for (var i = 0; i < scores.length; i++) {
-//                     var score = scores[i];
-//
-//                     if (result[score.hole_id] === undefined) { result[score.hole_id] = []; }
-//                     result[score.hole_id].push(score);
-//
-//                     if (totals[score.player_id] === undefined) { totals[score.player_id] = { player_id: score.player_id, totalScore: 0 }; }
-//                     totals[score.player_id].totalScore += score.score;
-//                 }
-//
-//                 result.totals = Object.keys(totals).map(function (key) { return totals[key] });
-//
-//                 deferred.resolve(result);
-//             }).catch( function (err) {
-//                 deferred.reject(err);
-//             });
-//
-//             return deferred.promise;
-//         }
+         //         service.getScores = function (gameId, holeId) {
+         //             var deferred = $q.defer();
+         //
+         //             var selector = {
+         //                 type: PouchDBFactory.types.score,
+         //                 game_id: gameId
+         //             };
+         //
+         //             if (holeId !== undefined) {
+         //                 selector.hole_id = holeId;
+         //             }
+         //
+         //             var result = {};
+         //             var totals = {};
+         //             PouchDBFactory.db.find({
+         //                 selector: selector
+         //             }).then( function (response) {
+         //                 var scores = response.docs;
+         //                 for (var i = 0; i < scores.length; i++) {
+         //                     var score = scores[i];
+         //
+         //                     if (result[score.hole_id] === undefined) { result[score.hole_id] = []; }
+         //                     result[score.hole_id].push(score);
+         //
+         //                     if (totals[score.player_id] === undefined) { totals[score.player_id] = { player_id: score.player_id, totalScore: 0 }; }
+         //                     totals[score.player_id].totalScore += score.score;
+         //                 }
+         //
+         //                 result.totals = Object.keys(totals).map(function (key) { return totals[key] });
+         //
+         //                 deferred.resolve(result);
+         //             }).catch( function (err) {
+         //                 deferred.reject(err);
+         //             });
+         //
+         //             return deferred.promise;
+         //         }
 
          service.create = function (courseId, playerIds) {
              var deferred = $q.defer();
@@ -545,7 +595,7 @@ discGolfFactories.factory(
                  player_id: playerId,
                  value: score
              };
-             
+
              var deferred = $q.defer();
              PouchDBFactory.db.put(score).then(function (response) {
                  return PouchDBFactory.db.get(response.id);
@@ -556,7 +606,7 @@ discGolfFactories.factory(
                  console.error(err);
                  deferred.reject(err);
              });
-             
+
              return deferred.promise;
          }
 

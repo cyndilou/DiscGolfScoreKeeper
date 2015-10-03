@@ -2,15 +2,18 @@
     <div class="page-header">
         <div ng-class="{'has-error':course.name == ''}">
             <h4><small>Course Name:</small></h4>
-            <input id="courseName" type="text" class="form-control" placeholder="Course Name" ng-model="course.name" show-focus="true">
+            <input id="courseName" name="courseName" type="text" class="form-control" placeholder="Course Name" 
+                   ng-model="courses[courseId].course.name" 
+                   ng-change="courses[courseId].course.dirty = true;"
+                   show-focus="true">
         </div>
     </div>
 
     <div class="page-body" page-body>
         <h4><small>Hole Count:</small></h4>
-        <div class="input-group" ng-class="{'has-error':course.holeCount <= 0}">
+        <div class="input-group" ng-class="{'has-error':courses[courseId].holes.length <= 0}">
             <input type="number" min="1" max="100" class="form-control" placeholder="Hole Count" aria-describedby="holeCount"
-                   ng-model="course.holeCount">
+                   ng-model="courses[courseId].holeCount" ng-change="holeCountChanged(courseId)">
             <span class="input-group-addon" id="holeCount">holes</span>
         </div>
 
@@ -26,13 +29,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="hole in getHoleList()">
-                        <td class="tableInfoCell"><small>{{hole}}</small></td>
+                    <tr ng-repeat="hole in courses[courseId].holes" ng-hide="hole.isActive == false">
+                        <td class="tableInfoCell"><small>{{hole.holeNumber}}</small></td>
                         <td>
-                            <input type="text" class="form-control" placeholder="feet" ng-model="course.holes[hole].distance">
+                            <input type="text" class="form-control" placeholder="feet" ng-model="hole.distance" ng-change="hole.dirty = true;">
                         </td>
                         <td>
-                            <input type="text" class="form-control" placeholder="par" ng-model="course.holes[hole].par">
+                            <input type="text" class="form-control" placeholder="par" ng-model="hole.par" ng-change="hole.dirty = true;">
                         </td>
                     </tr>
                 </tbody>
@@ -51,7 +54,7 @@
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-success btn-lg" 
                         ng-click="save()"
-                        ng-disabled="course.name == '' || course.holeCount <= 0">
+                        ng-disabled="courses[courseId].course.name == '' || courses[courseId].holeCount <= 0">
                     <span class="fa fa-check"></span>
                     Done
                 </button>
