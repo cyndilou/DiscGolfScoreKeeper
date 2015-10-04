@@ -43,6 +43,8 @@ Temporary Items
 .apdisk
 
 # =========================
-# Node Modules
+# Build Dirs
 # =========================
 node_modules
+.tmp
+dist
