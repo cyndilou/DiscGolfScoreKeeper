@@ -1,0 +1,26 @@
+{
+  "name": "disc-golf-score-keeper",
+  "version": "0.1.0",
+  "description": "score keeper for disc golf",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyndilou/DiscGolfScoreKeeper.git"
+  },
+  "author": "CyndiLou",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cyndilou/DiscGolfScoreKeeper/issues"
+  },
+  "homepage": "https://github.com/cyndilou/DiscGolfScoreKeeper#readme",
+  "devDependencies": {
+    "pouchdb": "^4.0.3",
+    "pouchdb-find": "^0.4.0"
+  }
+}

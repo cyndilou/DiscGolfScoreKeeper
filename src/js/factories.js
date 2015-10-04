@@ -217,7 +217,7 @@ discGolfFactories.factory(
                      service.delete(players[i]._id);
                  }
              }).catch ( function (err) {
-                 console.log(err);
+                 console.error(err);
              });
          }
 
@@ -435,7 +435,7 @@ discGolfFactories.factory(
                      service.delete(courses[i]._id);
                  }
              }).catch ( function (err) {
-                 console.log(err);
+                 console.error(err);
              });
          }
 
@@ -507,44 +507,6 @@ discGolfFactories.factory(
 
              return deferred.promise;
          }
-
-         //         service.getScores = function (gameId, holeId) {
-         //             var deferred = $q.defer();
-         //
-         //             var selector = {
-         //                 type: PouchDBFactory.types.score,
-         //                 game_id: gameId
-         //             };
-         //
-         //             if (holeId !== undefined) {
-         //                 selector.hole_id = holeId;
-         //             }
-         //
-         //             var result = {};
-         //             var totals = {};
-         //             PouchDBFactory.db.find({
-         //                 selector: selector
-         //             }).then( function (response) {
-         //                 var scores = response.docs;
-         //                 for (var i = 0; i < scores.length; i++) {
-         //                     var score = scores[i];
-         //
-         //                     if (result[score.hole_id] === undefined) { result[score.hole_id] = []; }
-         //                     result[score.hole_id].push(score);
-         //
-         //                     if (totals[score.player_id] === undefined) { totals[score.player_id] = { player_id: score.player_id, totalScore: 0 }; }
-         //                     totals[score.player_id].totalScore += score.score;
-         //                 }
-         //
-         //                 result.totals = Object.keys(totals).map(function (key) { return totals[key] });
-         //
-         //                 deferred.resolve(result);
-         //             }).catch( function (err) {
-         //                 deferred.reject(err);
-         //             });
-         //
-         //             return deferred.promise;
-         //         }
 
          service.create = function (courseId, playerIds) {
              var deferred = $q.defer();

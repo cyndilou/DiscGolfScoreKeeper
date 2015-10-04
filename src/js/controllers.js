@@ -207,9 +207,7 @@ discGolfControllers.controller(
          }
 
          $scope.updateHole = function () {
-             CourseFactory.updateHole($scope.currentHole).then( function (response) {
-                 console.log(response);
-             }).catch( function (err) {
+             CourseFactory.updateHole($scope.currentHole).catch( function (err) {
                  console.error(err);
              });
          }
@@ -425,8 +423,6 @@ discGolfControllers.controller(
 
          $scope.deleteGame = function (game) {
              GameFactory.delete(game._id).then( function (response) {
-                 console.log(response);
-
                  var index = $scope.gameList.indexOf(game);
                  if (index != -1) {
                      $scope.gameList.splice(index, 1);

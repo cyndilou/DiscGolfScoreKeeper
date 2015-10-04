@@ -143,7 +143,8 @@ discGolfApp.config(
      function($routeProvider) {
          $routeProvider.
          when('/home', {
-             templateUrl: 'partials/home.html'
+             templateUrl: 'partials/home.html',
+             controller: 'SettingsController'
          }).
          when('/new-game', {
              templateUrl: 'partials/newGame.html',
