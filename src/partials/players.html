@@ -11,17 +11,17 @@
                 <div ng-hide="tempPlayers[player._id] !== undefined">
                     {{player.name}}
                     <button class="transparentButton pull-right"
-                            ng-click="editPlayer(player)">
+                            ng-click="editPlayer(player)"
+                            show-focus="tempPlayers[player._id] === undefined">
                         <span class="fa fa-pencil"></span>
                     </button>
                 </div>
                 <div ng-show="tempPlayers[player._id] !== undefined">
-                    <form class="form-inline" action="">
+                    <form class="form-inline" action="javascript:void(0);">
                         <div class="form-group">
                             <div class="input-group" ng-class="{'has-error':tempPlayers[player._id].name == ''}">
                                 <input type="text" class="form-control" placeholder="Player Name" 
                                        ng-model="tempPlayers[player._id].name" 
-                                       ng-disabled="tempPlayers[player._id] === undefined"
                                        show-focus="tempPlayers[player._id] !== undefined">
                                 <span class="input-group-btn">
                                     <button class="btn btn-default" type="button" ng-click="endEdit(player, false)" ng-disabled="player.name == ''">

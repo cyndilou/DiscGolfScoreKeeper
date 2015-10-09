@@ -94,7 +94,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-usemin');
     grunt.loadNpmTasks('grunt-contrib-clean');
 
-    grunt.registerTask('default',[
+    grunt.registerTask('build',[
         'clean',
         'copy:html',
         'copy:img',
@@ -104,4 +104,7 @@ module.exports = function(grunt) {
         'uglify',
         'cssmin',
         'usemin']);
+    
+    grunt.registerTask('default', ['build']);
+    grunt.registerTask('buildAndDeploy', ['build', 'copy:tomcat']);
 };

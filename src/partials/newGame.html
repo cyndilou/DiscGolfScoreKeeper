@@ -12,12 +12,13 @@
                 <div ng-class="{'has-error':selectedCourseId === undefined}">
                     <select class="form-control" 
                             ng-model="selectedCourseId"
-                            ng-options="course._id as course.name for course in courseList | orderBy:'name'">
+                            ng-options="course._id as course.name for course in courseList | orderBy:'name'"
+                            show-focus="courseList.length">
                         <option value="" disabled>-- select course --</option>
                     </select>
                 </div>
 
-                <form action="">
+                <form action="javascript:void(0);">
                     <div class="input-group topMargin">
                         <input type="text" class="form-control" placeholder="New Course" ng-model="newCourseName">
 
@@ -57,7 +58,7 @@
                         </label>
                     </div>
                 </div>
-                <form action="">
+                <form action="javascript:void(0);">
                     <div class="input-group">
                         <input type="text" class="form-control" ng-model="newPlayerName" placeholder="New Player Name">
                         <span class="input-group-btn">
