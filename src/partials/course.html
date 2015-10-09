@@ -26,14 +26,14 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th class="tableInfoCell" style="width:50px"><small>Hole</small></th>
-                            <th class="tableInfoCell"><small>Feet</small></th>
-                            <th class="tableInfoCell"><small>Par</small></th>
+                            <th class="tableLabelCell" style="width:50px"><small>Hole</small></th>
+                            <th class="tableLabelCell"><small>Feet</small></th>
+                            <th class="tableLabelCell"><small>Par</small></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="hole in courses[courseId].holes" ng-hide="hole.isActive == false">
-                            <td class="tableInfoCell"><small>{{hole.holeNumber}}</small></td>
+                            <td class="tableLabelCell"><small>{{hole.holeNumber}}</small></td>
                             <td>
                                 <input type="text" pattern="\d*"  class="form-control" placeholder="feet" ng-model="hole.distance" ng-change="hole.dirty = true;">
                             </td>

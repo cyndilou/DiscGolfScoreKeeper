@@ -19,23 +19,23 @@
                         <table class="table table-bordered table-condensed">
                             <thead>
                                 <tr>
-                                    <th class="tableInfoCell"></th>
-                                    <th class="tableInfoCell centerText" style="max-width:50px">Total</th>
-                                    <th class="tableInfoCell centerText" ng-repeat="hole in courses[game.course_id].holes">
+                                    <th class="tableLabelCell"></th>
+                                    <th class="tableLabelCell centerText" style="max-width:50px">Total</th>
+                                    <th class="tableLabelCell centerText" ng-repeat="hole in courses[game.course_id].holes">
                                         {{hole.holeNumber}}
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="tableInfoCell">Par</td>
-                                    <td class="tableInfoCell centerText">{{getTotalPar(game.course_id)}}</td>
-                                    <td class="tableInfoCell centerText" ng-repeat="hole in courses[game.course_id].holes">
+                                    <td class="tableLabelCell">Par</td>
+                                    <td class="tableLabelCell centerText">{{getTotalPar(game.course_id)}}</td>
+                                    <td class="tableLabelCell centerText" ng-repeat="hole in courses[game.course_id].holes">
                                         {{hole.par}}
                                     </td>
                                 </tr>
                                 <tr ng-repeat="gamePlayer in games[game._id].playerScores | orderBy:'totalScore'">
-                                    <td>{{gamePlayer.player.name}}</td>
+                                    <td class="tableLabelCell">{{gamePlayer.player.name}}</td>
                                     <td class="centerText">{{calculatePlayerScore(gamePlayer.scoresByHole, courses[game.course_id].holes)}}</td>
                                     <td class="centerText" ng-repeat="hole in courses[game.course_id].holes">
                                         {{gamePlayer.scoresByHole[hole._id].value}}

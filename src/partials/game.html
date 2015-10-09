@@ -16,26 +16,26 @@
                 </colgroup>
                 <thead>
                     <tr>
-                        <th class="tableInfoCell skinnyColumn centerText"><small>Hole</small></th>
-                        <th class="tableInfoCell skinnyColumn centerText"><small>Feet</small></th>
-                        <th class="tableInfoCell skinnyColumn centerText"><small>Par</small></th>
-                        <th class="tableInfoCell centerText" ng-repeat="gamePlayer in games[gameId].playerScores | orderBy:'totalScore'">{{gamePlayer.player.name}}</th>
+                        <th class="tableLabelCell skinnyColumn centerText"><small>Hole</small></th>
+                        <th class="tableLabelCell skinnyColumn centerText"><small>Feet</small></th>
+                        <th class="tableLabelCell skinnyColumn centerText"><small>Par</small></th>
+                        <th class="tableLabelCell centerText" ng-repeat="gamePlayer in games[gameId].playerScores | orderBy:'totalScore'">{{gamePlayer.player.name}}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="hole in courses[games[gameId].game.course_id].holes">
-                        <td class="tableInfoCell skinnyColumn centerText"><small>{{hole.holeNumber}}</small></td>
-                        <td class="tableInfoCell skinnyColumn centerText"><small>{{hole.distance}}</small></td>
-                        <td class="tableInfoCell skinnyColumn centerText"><small>{{hole.par}}</small></td>
+                        <td class="tableLabelCell skinnyColumn centerText"><small>{{hole.holeNumber}}</small></td>
+                        <td class="tableLabelCell skinnyColumn centerText"><small>{{hole.distance}}</small></td>
+                        <td class="tableLabelCell skinnyColumn centerText"><small>{{hole.par}}</small></td>
                         <td class="centerText" ng-repeat="gamePlayer in games[gameId].playerScores | orderBy:'totalScore'">
                             {{gamePlayer.scoresByHole[hole._id].value}}
                         </td>
                     </tr>
                 </tbody>
                 <tfoot>
-                    <td class="tableInfoCell skinnyColumn centerText"><small>Total</small></td>
-                    <td class="tableInfoCell skinnyColumn centerText"><small>{{getTotalDistance(games[gameId].game.course_id)}}</small></td>
-                    <td class="tableInfoCell skinnyColumn centerText"><small>{{getTotalPar(games[gameId].game.course_id)}}</small></td>
+                    <td class="tableLabelCell skinnyColumn centerText"><small>Total</small></td>
+                    <td class="tableLabelCell skinnyColumn centerText"><small>{{getTotalDistance(games[gameId].game.course_id)}}</small></td>
+                    <td class="tableLabelCell skinnyColumn centerText"><small>{{getTotalPar(games[gameId].game.course_id)}}</small></td>
                     <td class="centerText" ng-repeat="gamePlayer in games[gameId].playerScores | orderBy:'totalScore'">
                         {{calculatePlayerScore(gamePlayer.scoresByHole, courses[games[gameId].game.course_id].holes)}}
                     </td>
