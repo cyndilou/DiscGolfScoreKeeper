@@ -49,10 +49,10 @@ discGolfApp.directive(
         return {
             link: function(scope, el, attr) {
 
-                var window = angular.element($window);
-                window.bind('resize', function () {
-                    scope.$apply();
-                });
+//                var window = angular.element($window);
+//                window.bind('resize', function () {
+//                    scope.$apply();
+//                });
                 
                 function resizeBody (windowHeight) {
                     var navbarHeight = $('.navbar-header').outerHeight();
@@ -64,7 +64,7 @@ discGolfApp.directive(
                 }
 
                 scope.$watch(function() {
-                    return $window.innerHeight;
+                    return $('.page-header').innerHeight();
                 }, function(value) {
                     resizeBody(value);
                 });

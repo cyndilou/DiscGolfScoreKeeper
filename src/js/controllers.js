@@ -129,6 +129,7 @@ discGolfControllers.controller(
          // Route parameters
          $scope.gameId = $routeParams.gameId;
          $scope.holeNumber = Number($routeParams.basket);
+         $scope.editCourseMode = false;
 
          // Get the game info based on the route parameters
          GameFactory.get($scope.gameId).then(function (response) {
@@ -159,6 +160,7 @@ discGolfControllers.controller(
              return CourseFactory.get($scope.game.course_id);
          }).then( function (response) {
              $scope.course = response.course;
+             $scope.holes = response.holes;
              $scope.holeCount = response.holes.length;
 
              // Get the current and last hole
@@ -172,6 +174,8 @@ discGolfControllers.controller(
                      $scope.lastHole = hole;
                  }
              }
+             
+             $scope.editCourseMode = (Number($scope.currentHole.par || 0) == 0) || (Number($scope.currentHole.distance || 0) == 0);
 
              // Calculate some stats for each player
              for (dataIndex in $scope.basketData) {
@@ -180,7 +184,7 @@ discGolfControllers.controller(
              }
 
              // Determine the max score for this hole
-             var highScore = $scope.currentHole.par !== undefined ? $scope.currentHole.par * 5 : 15;
+             var highScore = Number($scope.currentHole.par || 0) > 0 ? Number($scope.currentHole.par) * 5 : 15;
              $scope.scoreOptions = [];
              for (var i = 1; i <= highScore; i++) {
                  $scope.scoreOptions.push(i);
@@ -228,6 +232,22 @@ discGolfControllers.controller(
                      $scope.calculatePlayerScoreData(dataObject);
                  });
              }
+         }
+         
+         $scope.getPlayerScore = function (dataObject) {
+             if ($scope.holes === undefined) {
+                 return "";
+             }
+             
+             var diff = 0;
+             
+             for (var i = 0; i < $scope.holes.length; i++) {
+                 var hole = $scope.holes[i];
+                 var score = dataObject.scores[hole._id] !== undefined ? dataObject.scores[hole._id].value : hole.par || 0;
+                 diff += (score - hole.par) || 0;
+             }
+             
+             return (diff < 0 ? "- " : "+ ") + Math.abs(diff);
          }
 
          $scope.gameOver = function () {

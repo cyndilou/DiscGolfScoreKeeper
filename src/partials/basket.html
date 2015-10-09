@@ -1,32 +1,43 @@
 <div>
     <div class="page-header page-header-fixed">
         <div class="container">
-            <h4>{{course.name}} <small>Hole {{holeNumber}}</small></h4>
+            
+            <h4>{{course.name}} - Hole {{holeNumber}}
+                <small ng-hide="editCourseMode">Par {{currentHole.par}}, {{currentHole.distance}} feet</small>
 
-            <div class="my-table">
-                <div class="my-row">
-                    <div class="my-cell">
-                        <label class="control-label" for="par">Par</label>
-                    </div>
-                    <div class="my-cell">
-                        <input type="text" pattern="\d*" class="form-control" id="par" style="width:50px" 
-                               ng-model="currentHole.par"
-                               ng-change="updateHole()">
-                    </div>
+                <button class="transparentButton pull-right"
+                        ng-click="editCourseMode = true"
+                        ng-hide="editCourseMode"
+                        show-focus="editCourseMode == false">
+                    <span class="fa fa-pencil"></span>
+                </button>
+            </h4>
 
-                    <div class="my-cell">
-                        <label class="control-label" for="distance">Distance</label>
-                    </div>
-                    <div class="my-cell">
-                        <div class="input-group" style="width:100px">
-                            <input type="text" pattern="\d*"  class="form-control" id="distance"  
-                                   ng-model="currentHole.distance"
-                                   ng-blur="updateHole()">
-                            <span class="input-group-addon">ft</span>
-                        </div>
+            <form class="my-form-inline" 
+                  ng-show="editCourseMode"
+                  action="javascript:void(0);">
+                <div class="form-group">
+                    <label class="control-label" for="par">Par</label>
+                    <input type="text" pattern="\d*" class="form-control" id="par" style="width:50px" 
+                           show-focus="editCourseMode"
+                           ng-model="currentHole.par"
+                           ng-change="updateHole()">
+                </div>
+                <div class="form-group left-margin">
+                    <label class="control-label" for="distance">Distance</label>
+                    <div class="input-group" style="width:100px">
+                        <input type="text" pattern="\d*"  class="form-control" id="distance"  
+                               ng-model="currentHole.distance"
+                               ng-blur="updateHole()">
+                        <span class="input-group-addon">ft</span>
                     </div>
                 </div>
-            </div>
+                <div class="form-group pull-right">
+                    <button class="btn btn-success" type="submit" ng-click="editCourseMode = false">
+                        <span class="fa fa-check"></span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -38,7 +49,7 @@
             <div class="list-group-item" ng-repeat="dataObject in basketData | orderBy: 'lastHoleScore'">
                 <p>
                     <strong>{{dataObject.player.name}}</strong>
-                    <span class="badge pull-right">Total: {{dataObject.totalScore}}</span>
+                    <span class="badge pull-right">Total: {{getPlayerScore(dataObject)}}</span>
                 </p>
                 <div style="width: 100%;overflow: auto;">
                     <div class="btn-group" data-toggle="buttons">

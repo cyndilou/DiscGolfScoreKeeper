@@ -79,7 +79,7 @@ body, input, select {
 
 /*
 .page-content {
-    margin-top: 25px;
+margin-top: 25px;
 }
 */
 
@@ -119,4 +119,29 @@ body, input, select {
 
 .skinnyColumn {
     max-width: 30px;
+}
+
+.my-form-inline .form-group {
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+.my-form-inline .form-control {
+    display: inline-block;
+    vertical-align: middle;
+}
+.my-form-inline .form-control-static {
+    display: inline-block;
+}
+.my-form-inline .input-group {
+    display: inline-table;
+    vertical-align: middle;
+}
+
+.my-form-inline .has-feedback .form-control-feedback {
+    top: 0;
+}
+
+.left-margin {
+    margin-left: 10px;
 }

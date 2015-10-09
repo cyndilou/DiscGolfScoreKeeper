@@ -46,7 +46,8 @@
             <div class="panel-heading">Players</div>
             <div class="panel-body">
                 <div class="list-group">
-                    <div class="list-group-item checkbox" ng-repeat="player in playerList" ng-class="{'list-group-item-success' : selectedPlayers.indexOf(player._id) > -1}">
+                    <div class="list-group-item checkbox" ng-repeat="player in playerList | orderBy:'name'" 
+                         ng-class="{'list-group-item-success' : selectedPlayers.indexOf(player._id) > -1}">
                         <label style="width:100%">
                             <input
                                    type="checkbox"
