@@ -1,7 +1,7 @@
 <div>
     <div class="page-header page-header-fixed">
         <div class="container">
-            
+
             <h4>{{course.name}} - Hole {{holeNumber}}
                 <small ng-hide="editCourseMode">Par {{currentHole.par}}, {{currentHole.distance}} feet</small>
 
@@ -17,14 +17,14 @@
                   ng-show="editCourseMode"
                   action="javascript:void(0);">
                 <div class="form-group">
-                    <label class="control-label" for="par">Par</label>
+                    <label class="control-label label-margin" for="par">Par</label>
                     <input type="text" pattern="\d*" class="form-control" id="par" style="width:50px" 
                            show-focus="editCourseMode"
                            ng-model="currentHole.par"
                            ng-change="updateHole()">
                 </div>
                 <div class="form-group left-margin">
-                    <label class="control-label" for="distance">Distance</label>
+                    <label class="control-label label-margin" for="distance">Distance</label>
                     <div class="input-group" style="width:100px">
                         <input type="text" pattern="\d*"  class="form-control" id="distance"  
                                ng-model="currentHole.distance"
@@ -32,11 +32,9 @@
                         <span class="input-group-addon">ft</span>
                     </div>
                 </div>
-                <div class="form-group pull-right">
-                    <button class="btn btn-success" type="submit" ng-click="editCourseMode = false">
-                        <span class="fa fa-check"></span>
-                    </button>
-                </div>
+                <button class="btn btn-success pull-right" type="submit" ng-click="editCourseMode = false">
+                    <span class="fa fa-check"></span>
+                </button>
             </form>
         </div>
     </div>
