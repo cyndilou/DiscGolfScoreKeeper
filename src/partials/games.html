@@ -20,8 +20,8 @@
                             <thead>
                                 <tr>
                                     <th class="tableInfoCell"></th>
-                                    <th class="tableInfoCell" style="max-width:50px">Total</th>
-                                    <th class="tableInfoCell" ng-repeat="hole in courses[game.course_id].holes">
+                                    <th class="tableInfoCell centerText" style="max-width:50px">Total</th>
+                                    <th class="tableInfoCell centerText" ng-repeat="hole in courses[game.course_id].holes">
                                         {{hole.holeNumber}}
                                     </th>
                                 </tr>
@@ -29,15 +29,15 @@
                             <tbody>
                                 <tr>
                                     <td class="tableInfoCell">Par</td>
-                                    <td class="tableInfoCell">{{getTotalPar(game.course_id)}}</td>
-                                    <td class="tableInfoCell" ng-repeat="hole in courses[game.course_id].holes">
+                                    <td class="tableInfoCell centerText">{{getTotalPar(game.course_id)}}</td>
+                                    <td class="tableInfoCell centerText" ng-repeat="hole in courses[game.course_id].holes">
                                         {{hole.par}}
                                     </td>
                                 </tr>
                                 <tr ng-repeat="gamePlayer in games[game._id].playerScores | orderBy:'totalScore'">
                                     <td>{{gamePlayer.player.name}}</td>
-                                    <td>{{gamePlayer.totalScore}}</td>
-                                    <td ng-repeat="hole in courses[game.course_id].holes">
+                                    <td class="centerText">{{calculatePlayerScore(gamePlayer.scoresByHole, courses[game.course_id].holes)}}</td>
+                                    <td class="centerText" ng-repeat="hole in courses[game.course_id].holes">
                                         {{gamePlayer.scoresByHole[hole._id].value}}
                                     </td>
                                 </tr>

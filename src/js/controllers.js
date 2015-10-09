@@ -420,6 +420,17 @@ discGolfControllers.controller(
                  return totalDistance;
              }
          }
+         
+         $scope.calculatePlayerScore = function (scores, holes) {
+             var diff = 0;
+             for (var i = 0; i < holes.length; i++) {
+                 var hole = holes[i];
+                 var score = scores[hole._id] !== undefined ? scores[hole._id].value : hole.par;
+                 diff += (score - hole.par);
+             }
+             
+             return (diff < 0 ? "-" : "+") + Math.abs(diff);
+         }
 
          $scope.deleteGame = function (game) {
              GameFactory.delete(game._id).then( function (response) {

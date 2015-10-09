@@ -113,3 +113,11 @@ body, input, select {
 .hidden {
     display: none;
 }
+
+.centerText {
+    text-align: center;
+}
+
+.skinnyColumn {
+    max-width: 30px;
+}
