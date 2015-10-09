@@ -1,6 +1,8 @@
 <div>
-    <div class="page-header">
-        <h4>New Game</h4>
+    <div class="page-header page-header-fixed">
+        <div class="container">
+            <h4>New Game</h4>
+        </div>
     </div>
     <div class="page-body" page-body>
         <div class="panel panel-default">
@@ -15,17 +17,18 @@
                     </select>
                 </div>
 
-                <div class="input-group topMargin">
-                    <input type="text" class="form-control" placeholder="New Course" ng-model="newCourseName">
+                <form action="">
+                    <div class="input-group topMargin">
+                        <input type="text" class="form-control" placeholder="New Course" ng-model="newCourseName">
 
-                    <div class="input-group-btn" data-toggle="buttons">
-                        <button class="btn btn-success" type="button" ng-click="addCourse()" ng-disabled="newCourseName == ''">
-                            <span class="fa fa-plus"></span>
-                        </button>
+                        <div class="input-group-btn" data-toggle="buttons">
+                            <button class="btn btn-success" type="submit" ng-click="addCourse()" ng-disabled="newCourseName == ''">
+                                <span class="fa fa-plus"></span>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="btn-group btn-group-justified topMargin" role="group" data-toggle="buttons">
+                    <div class="btn-group btn-group-justified topMargin" role="group" data-toggle="buttons">
                         <label class="btn btn-default active" ng-click="newCourseHoleCount = 9">
                             <input type="radio" name="holeCount" value="9"> 9 Holes
                         </label>
@@ -33,7 +36,8 @@
                         <label class="btn btn-default" ng-click="newCourseHoleCount = 18">
                             <input type="radio" name="holeCount" value="18"> 18 Holes
                         </label>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -53,14 +57,16 @@
                         </label>
                     </div>
                 </div>
-                <div class="input-group">
-                    <input type="text" class="form-control" ng-model="newPlayerName" placeholder="New Player Name">
-                    <span class="input-group-btn">
-                        <button class="btn btn-success" type="button" ng-click="addNewPlayer()" ng-disabled="newPlayerName == ''">
-                            <span class="fa fa-plus"></span>
-                        </button>
-                    </span>
-                </div>
+                <form action="">
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="newPlayerName" placeholder="New Player Name">
+                        <span class="input-group-btn">
+                            <button class="btn btn-success" type="submit" ng-click="addNewPlayer()" ng-disabled="newPlayerName == ''">
+                                <span class="fa fa-plus"></span>
+                            </button>
+                        </span>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

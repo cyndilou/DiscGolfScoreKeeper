@@ -55,11 +55,12 @@ discGolfApp.directive(
                 });
                 
                 function resizeBody (windowHeight) {
-                    var headerHeight = $('.page-header').outerHeight();
+                    var navbarHeight = $('.navbar-header').outerHeight();
+                    var headerHeight = $('.page-header').outerHeight() + navbarHeight;
                     var footerHeight = $('.page-footer').outerHeight();
-                    var bodyHeight = windowHeight - headerHeight - footerHeight - 85;
-
-                    el.height(bodyHeight + 'px');
+                    
+                    el.css('margin-top', headerHeight + 'px');
+                    el.css('margin-bottom', footerHeight + 'px');
                 }
 
                 scope.$watch(function() {

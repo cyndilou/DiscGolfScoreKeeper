@@ -1,27 +1,29 @@
 <div>
-    <div class="page-header">
-        <h4>{{course.name}} <small>Hole {{holeNumber}}</small></h4>
+    <div class="page-header page-header-fixed">
+        <div class="container">
+            <h4>{{course.name}} <small>Hole {{holeNumber}}</small></h4>
 
-        <div class="my-table">
-            <div class="my-row">
-                <div class="my-cell">
-                    <label class="control-label" for="par">Par</label>
-                </div>
-                <div class="my-cell">
-                    <input type="text" class="form-control" id="par" style="width:50px" 
-                           ng-model="currentHole.par"
-                           ng-change="updateHole()">
-                </div>
+            <div class="my-table">
+                <div class="my-row">
+                    <div class="my-cell">
+                        <label class="control-label" for="par">Par</label>
+                    </div>
+                    <div class="my-cell">
+                        <input type="text" pattern="\d*" class="form-control" id="par" style="width:50px" 
+                               ng-model="currentHole.par"
+                               ng-change="updateHole()">
+                    </div>
 
-                <div class="my-cell">
-                    <label class="control-label" for="distance">Distance</label>
-                </div>
-                <div class="my-cell">
-                    <div class="input-group" style="width:100px">
-                        <input type="text" class="form-control" id="distance"  
-                               ng-model="currentHole.distance"
-                               ng-blur="updateHole()">
-                        <span class="input-group-addon">ft</span>
+                    <div class="my-cell">
+                        <label class="control-label" for="distance">Distance</label>
+                    </div>
+                    <div class="my-cell">
+                        <div class="input-group" style="width:100px">
+                            <input type="text" pattern="\d*"  class="form-control" id="distance"  
+                                   ng-model="currentHole.distance"
+                                   ng-blur="updateHole()">
+                            <span class="input-group-addon">ft</span>
+                        </div>
                     </div>
                 </div>
             </div>

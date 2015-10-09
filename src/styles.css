@@ -1,3 +1,7 @@
+body, input, select {
+    font-size: 16px !important;
+}
+
 .squareContainer {
     display: inline-block;
     position: relative;
@@ -39,6 +43,8 @@
 .transparentButton {
     background-color: transparent;
     border: none;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
 .transparentButton:focus {
@@ -72,12 +78,25 @@
     min-width: 25px;
 }
 
+/*
 .page-content {
     margin-top: 25px;
+}
+*/
+
+.page-header-fixed {
+    position: fixed;
+    left: 0px;
+    top: 10px;
+    width: 100%;
+    background-color: white;
+    z-index: 100;
+    padding-top: 10px;
 }
 
 .page-body {
     overflow-y: auto;
+    padding-top: 10px;
 }
 
 .page-footer {
@@ -88,6 +107,7 @@
     bottom:0px;
     width:100%;
     padding: 10px;
+    z-index: 100;
 }
 
 .hidden {

@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         //        dest: 'build/<%= pkg.name %>.min.js'
         //      }
         //    }
-        
+
         clean: ["dist", '.tmp'],
 
         ngtemplates: {
@@ -52,6 +52,28 @@ module.exports = function(grunt) {
             html: {
                 src: 'src/index.html', 
                 dest: 'dist/index.html'
+            },
+            img: {
+                expand: true,
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'src/',
+                        src: ['img/**'],
+                        dest: 'dist/'
+                    }
+                ]
+            },
+            tomcat: {
+                expand: true,
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'dist/',
+                        src: ['**'],
+                        dest: 'C:/Program Files/Apache Software Foundation/Tomcat 7.0/webapps/test/'
+                    }
+                ]
             }
         },
 
@@ -75,6 +97,7 @@ module.exports = function(grunt) {
     grunt.registerTask('default',[
         'clean',
         'copy:html',
+        'copy:img',
         'useminPrepare',
         'ngtemplates',
         'concat',

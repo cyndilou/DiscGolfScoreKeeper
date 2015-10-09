@@ -1,8 +1,10 @@
 <div>
-    <div class="page-header">
-        <h4>Players</h4>
+    <div class="page-header page-header-fixed">
+        <div class="container">
+            <h4>Players</h4>
+        </div>
     </div>
-    
+
     <div class="page-body" page-body>
         <div class="list-group">
             <div class="list-group-item" ng-repeat="player in playerList | orderBy:'name' track by $index">
@@ -14,10 +16,13 @@
                     </button>
                 </div>
                 <div ng-show="tempPlayers[player._id] !== undefined">
-                    <form class="form-inline">
+                    <form class="form-inline" action="">
                         <div class="form-group">
                             <div class="input-group" ng-class="{'has-error':tempPlayers[player._id].name == ''}">
-                                <input type="text" class="form-control" placeholder="Player Name" ng-model="tempPlayers[player._id].name" show-focus="tempPlayers[player._id] !== undefined">
+                                <input type="text" class="form-control" placeholder="Player Name" 
+                                       ng-model="tempPlayers[player._id].name" 
+                                       ng-disabled="tempPlayers[player._id] === undefined"
+                                       show-focus="tempPlayers[player._id] !== undefined">
                                 <span class="input-group-btn">
                                     <button class="btn btn-default" type="button" ng-click="endEdit(player, false)" ng-disabled="player.name == ''">
                                         <span class="fa fa-close"></span>
@@ -39,7 +44,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="page-footer">
         <button class="btn btn-block btn-lg btn-success" ng-click="addPlayer()">Add Player</button>
     </div>

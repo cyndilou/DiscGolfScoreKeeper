@@ -1,9 +1,11 @@
 <div>
-    <div class="page-header">
-        <h4>{{courses[games[gameId].game.course_id].course.name}} <small>{{games[gameId].game.date | date:'short'}}</small></h4>
+    <div class="page-header page-header-fixed">
+        <div class="container">
+            <h4>{{courses[games[gameId].game.course_id].course.name}} <small>{{games[gameId].game.date | date:'short'}}</small></h4>
+        </div>
     </div>
-    
-    <div class="page-body" page-body>
+
+    <div class="page-body" page-body style="padding-top:40px">
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
@@ -33,7 +35,7 @@
             </table>
         </div>
     </div>
-    
+
     <div class="page-footer">
         <button class="btn btn-block btn-lg btn-success" onClick="location.href='#/new-game'" ng-show="isGameOver(gameId)">Play Again</button>
         <button class="btn btn-block btn-lg btn-success" ng-click="resumeGame()" ng-class="{'hidden':isGameOver(gameId)}">Resume</button>

@@ -1,8 +1,6 @@
 
 <!DOCTYPE html>
 <html ng-app="discGolfApp">
-    
-<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,9 +9,20 @@
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
         <meta name="description" content="App to keep score for disc golf">
         <meta name="author" content="CyndiLou">
-        <!--        <link rel="icon" href="../../favicon.ico">-->
+        <link rel="icon" href="./img/dga76.png">
+
+        <!-- iOS Web App Stuff -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="apple-touch-icon" sizes="76x76" href="./img/dga76.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="./img/dga120.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="./img/dga152.png">
+        <link rel="apple-touch-startup-image" href="./img/startup.png">
 
         <title>Disc Golf Score Card</title>
+
+        <!-- build:css ./app.css -->
+        <link rel="stylesheet" type="text/css" href="./styles.css">
+        <!-- endbuild -->
 
         <!-- JQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -28,11 +37,7 @@
         <!-- AngularJS includes -->
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-route.min.js"></script>
-        
-        <!-- build:css ./app.css -->
-        <link rel="stylesheet" type="text/css" href="./styles.css">
-        <!-- endbuild -->
-        
+
         <!-- build:js ./scripts.js -->
         <script src="../node_modules/pouchdb/dist/pouchdb.min.js"></script>
         <script src="../node_modules/pouchdb-find/dist/pouchdb.find.min.js"></script>
@@ -41,7 +46,7 @@
         <script src="./js/factories.js"></script>
         <script src="./js/controllers.js"></script>
         <!-- endbuild -->
-        
+
     </head>
 
     <body>
