@@ -101,6 +101,8 @@ discGolfControllers.controller(
                  CourseFactory.get(response.course.id).then(function (response) {
                      $scope.courseList.push(response.course);
                      $scope.selectedCourseId = response.course._id;
+                     
+                     $scope.addCourseMode = false;
                  });
              });
          }

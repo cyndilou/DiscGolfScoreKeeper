@@ -11,7 +11,7 @@
 
                 <button class="transparentButton" type="button" data-toggle="collapse" data-target="#collapseExample-{{$index}}" aria-expanded="false" ng-click="loadGame(game._id)">
                     <span class="fa"></span>
-                    {{courses[game.course_id].course.name}} <small>{{game.date | date:'short'}}</small>
+                    {{courses[game.course_id].course.name}} <small>{{game.date | date:'EEEE, M/d/yy h:mm a'}}</small>
                 </button>
 
                 <div class="collapse" id="collapseExample-{{$index}}" style="margin-top:10px; position:relative">

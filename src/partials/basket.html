@@ -20,7 +20,6 @@
                 <div class="form-group">
                     <label class="control-label label-margin" for="par">Par</label>
                     <input type="text" pattern="\d*" class="form-control" id="par" style="width:50px" 
-                           show-focus="editCourseMode"
                            ng-model="currentHole.par"
                            ng-change="updateHole()">
                 </div>
@@ -33,7 +32,7 @@
                         <span class="input-group-addon">ft</span>
                     </div>
                 </div>
-                <button class="btn btn-success pull-right" type="submit" ng-click="editCourseMode = false">
+                <button class="transparentButton left-margin" type="submit" ng-click="editCourseMode = false">
                     <span class="fa fa-check"></span>
                 </button>
             </form>
