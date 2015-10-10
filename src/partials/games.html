@@ -6,15 +6,16 @@
     </div>
     <div class="page-body" page-body>
         <div class="list-group">
-            <!-- todo: order the list by game date.  See http://justinklemm.com/angularjs-filter-ordering-objects-ngrepeat/ -->
-            <div class="list-group-item" ng-repeat="game in gameList" expand-collapse-icon>
+            <div class="list-group-item" ng-repeat="game in gameList | orderBy:'date'" expand-collapse-icon>
+                <div class="overlay cssFade" ng-hide="courses[game.course_id] !== undefined"></div>
 
                 <button class="transparentButton" type="button" data-toggle="collapse" data-target="#collapseExample-{{$index}}" aria-expanded="false" ng-click="loadGame(game._id)">
                     <span class="fa"></span>
                     {{courses[game.course_id].course.name}} <small>{{game.date | date:'short'}}</small>
                 </button>
 
-                <div class="collapse" id="collapseExample-{{$index}}" style="margin-top:10px">
+                <div class="collapse" id="collapseExample-{{$index}}" style="margin-top:10px; position:relative">
+                    <div class="overlay cssSlowFade" ng-hide="games[game._id] !== undefined"></div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-condensed">
                             <thead>

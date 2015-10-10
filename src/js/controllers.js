@@ -189,6 +189,8 @@ discGolfControllers.controller(
              for (var i = 1; i <= highScore; i++) {
                  $scope.scoreOptions.push(i);
              }
+             
+             $scope.pageLoaded = true;
          });
 
          $scope.calculatePlayerScoreData = function (basketDataObject) {
@@ -442,11 +444,13 @@ discGolfControllers.controller(
          }
          
          $scope.calculatePlayerScore = function (scores, holes) {
+             if (holes === undefined) { return ""; }
+             
              var diff = 0;
              for (var i = 0; i < holes.length; i++) {
                  var hole = holes[i];
-                 var score = scores[hole._id] !== undefined ? scores[hole._id].value : hole.par;
-                 diff += (score - hole.par);
+                 var score = scores[hole._id] !== undefined ? scores[hole._id].value : hole.par || 0;
+                 diff += (score - hole.par) || 0;
              }
              
              return (diff < 0 ? "-" : "+") + Math.abs(diff);

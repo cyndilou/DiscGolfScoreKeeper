@@ -2,6 +2,7 @@ var discGolfApp = angular.module(
     'discGolfApp', 
     [
         'ngRoute',
+        'ngAnimate',
         'discGolfControllers',
         'discGolfFactories'
     ]);
