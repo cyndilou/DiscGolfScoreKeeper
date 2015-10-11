@@ -82,6 +82,13 @@ module.exports = function(grunt) {
                 mangle: false,
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
+        },
+
+        'gh-pages': {
+            options: {
+                base: 'dist'
+            },
+            src: ['**']
         }
 
     });
@@ -93,6 +100,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-usemin');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-gh-pages');
 
     grunt.registerTask('build',[
         'clean',
@@ -104,7 +112,7 @@ module.exports = function(grunt) {
         'uglify',
         'cssmin',
         'usemin']);
-    
+
     grunt.registerTask('default', ['build']);
     grunt.registerTask('buildAndDeploy', ['build', 'copy:tomcat']);
 };
