@@ -115,4 +115,5 @@ module.exports = function(grunt) {
 
     grunt.registerTask('default', ['build']);
     grunt.registerTask('buildAndDeploy', ['build', 'copy:tomcat']);
+    grunt.registerTask('publish', ['build', 'gh-pages']);
 };
